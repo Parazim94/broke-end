@@ -40,9 +40,7 @@ router.post("/login", (req, res, next) => __awaiter(void 0, void 0, void 0, func
     const { email, password } = req.body;
     try {
         const user = yield User_1.User.findOne({ email: email });
-        console.log(typeof password);
         if (user && user.hashedPW && (yield (0, crypto_1.compare)(password, user.hashedPW))) {
-            console.log("sieht gut aus");
             const jwt = (0, jwt_1.createJwt)(user.email);
             res.cookie("jwt", jwt, {
                 httpOnly: true,
@@ -64,7 +62,6 @@ router.get("/logout", (req, res, next) => __awaiter(void 0, void 0, void 0, func
     const token = req.cookies.jwt || req.body.token;
     if (token) {
         const deletedToken = yield DeletedToken_1.DeletedToken.create({ token: token });
-        console.log(deletedToken);
     }
     res.clearCookie("jwt", { httpOnly: true, secure: false, sameSite: "lax" });
     res.send("User logged out!");

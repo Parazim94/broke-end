@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import { connectDB } from "./libs/database";
 import authRoute from "./routes/authRouter";
+import marketRoute from "./routes/marketRouter";
 
 interface Error {
   message: string;
@@ -16,13 +17,15 @@ dotenv.config();
 connectDB();
 const app = express();
 
-app.use(cors({ credentials: true }));
+app.use(cors({ origin: "http://localhost:8081", credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
 const PORT = process.env.PORT;
 
 app.use("/auth", authRoute);
+
+app.use("/marketData", marketRoute);
 
 app.use("*", (req, res, next) => {
   res.send("Oi,site not found!");

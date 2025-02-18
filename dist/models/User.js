@@ -12,6 +12,7 @@ const userSchema = new mongoose_1.Schema({
     cash: { type: Number, default: 10000 },
     history: [Number], //trade.id
     positions: [Object], //coin.id amount
+    favorites: [String],
 }, { timestamps: true });
 userSchema.methods.toJSON = function () {
     const obj = this.toObject();

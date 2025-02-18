@@ -9,7 +9,6 @@ const router = express.Router();
 router.post("/register", async (req, res, next) => {
   try {
     const { userName, email, password, age } = req.body;
-
     const hashedPassword = await hash(password);
     const newUser = await User.create({
       userName,
@@ -17,7 +16,6 @@ router.post("/register", async (req, res, next) => {
       age,
       hashedPW: hashedPassword,
     });
-
     res.send(newUser);
   } catch (error) {
     console.log(error);
@@ -29,9 +27,7 @@ router.post("/login", async (req, res, next) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email: email });
-    console.log(typeof password);
     if (user && user.hashedPW && (await compare(password, user.hashedPW))) {
-      console.log("sieht gut aus");
       const jwt = createJwt(user.email);
       res.cookie("jwt", jwt, {
         httpOnly: true,
@@ -52,9 +48,7 @@ router.get("/logout", async (req, res, next) => {
   const token = req.cookies.jwt || req.body.token;
   if (token) {
     const deletedToken = await DeletedToken.create({ token: token });
-    console.log(deletedToken);
   }
-
   res.clearCookie("jwt", { httpOnly: true, secure: false, sameSite: "lax" });
   res.send("User logged out!");
 });

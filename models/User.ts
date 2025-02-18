@@ -11,6 +11,7 @@ const userSchema = new Schema(
     cash: { type: Number, default: 10000 },
     history: [Number], //trade.id
     positions: [Object], //coin.id amount
+    favorites: [String],
   },
   { timestamps: true }
 );
