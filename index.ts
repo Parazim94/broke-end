@@ -17,6 +17,12 @@ dotenv.config();
 connectDB();
 const app = express();
 
+app.use(
+  cors({
+    credentials: true, // Erlaube das Senden von Cookies
+  })
+);
+
 app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
