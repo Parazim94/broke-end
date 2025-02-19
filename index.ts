@@ -34,7 +34,7 @@ app.use("/auth", authRoute);
 app.use("/marketData", marketRoute);
 
 app.use("*", (req, res, next) => {
-  res.send("Oi,site not found!");
+  res.send("Oioioi,site not found!");
 });
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
