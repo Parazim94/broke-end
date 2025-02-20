@@ -2,14 +2,17 @@ import express from "express";
 
 const router = express.Router();
 
-// Globale Cache-Variablen
+// Globale Cache-Variablen für CoinGecko
 let cachedData: any = null;
 let lastFetchTime: number = 0;
+// Globale Cache-Variablen für Binance
+let binanceCache: any[] = [];
+let lastBinanceFetchTime: number = 0;
 
 router.get("/", async (req, res, next) => {
   const now = Date.now();
   const halfminute = 30 * 1000;
-  // Prüfen, ob die Daten älter als 30 Sekunden sind
+  // Prüfen, ob CoinGecko-Daten älter als 30 Sekunden sind
   if (!cachedData || now - lastFetchTime > halfminute) {
     try {
       const response = await fetch(
@@ -20,28 +23,28 @@ router.get("/", async (req, res, next) => {
       lastFetchTime = now;
     } catch (error) {
       console.error("Fehler beim Abrufen der CoinGecko-Daten:", error);
-      // Falls es einen Fehler gibt und Cache vorhanden ist, wird dieser genutzt.
       if (cachedData) {
         res.send(cachedData);
         return;
       }
-      // Andernfalls wird ein Fehlerstatus gesendet.
       res.status(500).send({ error: "Fehler beim Abrufen der Daten" });
       return;
     }
   }
-  // Binance-Daten abrufen
-  let binanceData: any[] = [];
-  try {
-    const binanceResp = await fetch("https://api.binance.com/api/v3/ticker/24hr");
-    binanceData = await binanceResp.json();
-  } catch (err) {
-    console.error("Fehler beim Abrufen der Binance-Daten:", err);
+  // Überprüfen, ob Binance-Daten älter als 1 Sekunde sind
+  if (now - lastBinanceFetchTime > 1000) {
+    try {
+      const binanceResp = await fetch("https://api.binance.com/api/v3/ticker/24hr");
+      binanceCache = await binanceResp.json();
+      lastBinanceFetchTime = now;
+    } catch (err) {
+      console.error("Fehler beim Abrufen der Binance-Daten:", err);
+    }
   }
   // Mergen: Für jedes Coin werden entsprechende Binance-Preis-Daten angehängt
   const mergedData = cachedData.map((coin: any) => {
     const coinSymbolUpper = coin.symbol.toUpperCase();
-    const binanceInfo = binanceData.find((ticker: any) =>
+    const binanceInfo = binanceCache.find((ticker: any) =>
       ticker.symbol.endsWith(coinSymbolUpper)
     );
     return { ...coin, binance: binanceInfo || null };
