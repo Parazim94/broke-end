@@ -19,8 +19,12 @@ router.get("/", async (req, res, next) => {
         "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=true"
       );
       const data = await response.json();
-      cachedData = data;
-      lastFetchTime = now;
+      if (Array.isArray(data)) {
+        cachedData = data;
+        lastFetchTime = now;
+      } else {
+        throw new Error("Unerwartetes Datenformat von CoinGecko");
+      }
     } catch (error) {
       console.error("Fehler beim Abrufen der CoinGecko-Daten:", error);
       if (cachedData) {
@@ -31,23 +35,32 @@ router.get("/", async (req, res, next) => {
       return;
     }
   }
-  // Binance-Daten aktualisieren, falls älter als 1 Sekunde
+  // Überprüfen, ob Binance-Daten älter als 1 Sekunde sind
   if (now - lastBinanceFetchTime > 1000) {
     try {
-      const binanceResp = await fetch("https://api.binance.com/api/v3/ticker/24hr");
-      binanceCache = await binanceResp.json();
-      lastBinanceFetchTime = now;
+      const binanceResp = await fetch(
+        "https://api.binance.com/api/v3/ticker/24hr"
+      );
+      const binanceData = await binanceResp.json();
+      if (Array.isArray(binanceData)) {
+        binanceCache = binanceData;
+        lastBinanceFetchTime = now;
+      } else {
+        console.error("Binance API gab kein Array zurück:", binanceData);
+      }
     } catch (err) {
       console.error("Fehler beim Abrufen der Binance-Daten:", err);
     }
   }
-  // Mergen: Verwende für id, name, symbol, market_cap, image und sparkline die CoinGecko-Daten,
-  // und für current_price, price_change_percentage_24h, high_24h, low_24h und total_volume die Binance-Daten.
+  // Mergen: Nur image und sparkline von CoinGecko, übrige Daten von Binance
   const mergedData = cachedData.map((coin: any) => {
     const coinSymbolUpper = coin.symbol.toUpperCase();
-    const binanceInfo = binanceCache.find((ticker: any) =>
-      ticker.symbol.endsWith(coinSymbolUpper)
-    );
+    const binanceInfo =
+      Array.isArray(binanceCache) &&
+      binanceCache.find((ticker: any) =>
+        ticker.symbol.endsWith(coinSymbolUpper)
+      );
+
     return {
       id: coin.id,
       name: coin.name,
@@ -59,15 +72,17 @@ router.get("/", async (req, res, next) => {
       total_volume: binanceInfo ? Number(binanceInfo.volume) : coin.total_volume,
       market_cap: coin.market_cap,
       image: coin.image,
-      sparkline: coin.sparkline_in_7d
+      sparkline: coin.sparkline_in_7d,
     };
   });
+
   res.send(mergedData);
 });
 
 router.get("/news", async (req, res, next) => {
   const RSS_URL = "https://www.coindesk.com/arc/outboundfeeds/rss/";
   const API_URL = `https://api.rss2json.com/v1/api.json?rss_url=${RSS_URL}`;
+
   try {
     const response = await fetch(API_URL);
     const data = await response.json();
