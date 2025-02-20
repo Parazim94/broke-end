@@ -12,7 +12,7 @@ let lastBinanceFetchTime: number = 0;
 router.get("/", async (req, res, next) => {
   const now = Date.now();
   const halfminute = 30 * 1000;
-  // Prüfen, ob CoinGecko-Daten älter als 30 Sekunden sind
+  // CoinGecko-Daten abrufen, falls älter als 30 Sekunden
   if (!cachedData || now - lastFetchTime > halfminute) {
     try {
       const response = await fetch(
@@ -31,7 +31,7 @@ router.get("/", async (req, res, next) => {
       return;
     }
   }
-  // Überprüfen, ob Binance-Daten älter als 1 Sekunde sind
+  // Binance-Daten aktualisieren, falls älter als 1 Sekunde
   if (now - lastBinanceFetchTime > 1000) {
     try {
       const binanceResp = await fetch("https://api.binance.com/api/v3/ticker/24hr");
@@ -41,16 +41,25 @@ router.get("/", async (req, res, next) => {
       console.error("Fehler beim Abrufen der Binance-Daten:", err);
     }
   }
-  // Mergen: Nur image und sparkline von CoinGecko, übrige Daten von Binance
+  // Mergen: Verwende für id, name, symbol, market_cap, image und sparkline die CoinGecko-Daten,
+  // und für current_price, price_change_percentage_24h, high_24h, low_24h und total_volume die Binance-Daten.
   const mergedData = cachedData.map((coin: any) => {
     const coinSymbolUpper = coin.symbol.toUpperCase();
     const binanceInfo = binanceCache.find((ticker: any) =>
       ticker.symbol.endsWith(coinSymbolUpper)
     );
     return {
+      id: coin.id,
+      name: coin.name,
+      symbol: coin.symbol,
+      current_price: binanceInfo ? Number(binanceInfo.lastPrice) : coin.current_price,
+      price_change_percentage_24h: binanceInfo ? Number(binanceInfo.priceChangePercent) : coin.price_change_percentage_24h,
+      high_24h: binanceInfo ? Number(binanceInfo.highPrice) : coin.high_24h,
+      low_24h: binanceInfo ? Number(binanceInfo.lowPrice) : coin.low_24h,
+      total_volume: binanceInfo ? Number(binanceInfo.volume) : coin.total_volume,
+      market_cap: coin.market_cap,
       image: coin.image,
-      sparkline: coin.sparkline_in_7d,
-      ...binanceInfo
+      sparkline: coin.sparkline_in_7d
     };
   });
   res.send(mergedData);
