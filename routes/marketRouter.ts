@@ -9,7 +9,7 @@ let lastFetchTime: number = 0;
 router.get("/", async (req, res, next) => {
   const now = Date.now();
   const halfminute = 30 * 1000;
-  // Prüfen, ob die Daten älter als 1 Minute sind
+  // Prüfen, ob die Daten älter als 30 Sekunden sind
   if (!cachedData || now - lastFetchTime > halfminute) {
     try {
       const response = await fetch(
@@ -30,8 +30,25 @@ router.get("/", async (req, res, next) => {
       return;
     }
   }
-  res.send(cachedData);
+  // Binance-Daten abrufen
+  let binanceData: any[] = [];
+  try {
+    const binanceResp = await fetch("https://api.binance.com/api/v3/ticker/24hr");
+    binanceData = await binanceResp.json();
+  } catch (err) {
+    console.error("Fehler beim Abrufen der Binance-Daten:", err);
+  }
+  // Mergen: Für jedes Coin werden entsprechende Binance-Preis-Daten angehängt
+  const mergedData = cachedData.map((coin: any) => {
+    const coinSymbolUpper = coin.symbol.toUpperCase();
+    const binanceInfo = binanceData.find((ticker: any) =>
+      ticker.symbol.endsWith(coinSymbolUpper)
+    );
+    return { ...coin, binance: binanceInfo || null };
+  });
+  res.send(mergedData);
 });
+
 router.get("/news", async (req, res, next) => {
   const RSS_URL = "https://www.coindesk.com/arc/outboundfeeds/rss/";
   const API_URL = `https://api.rss2json.com/v1/api.json?rss_url=${RSS_URL}`;
