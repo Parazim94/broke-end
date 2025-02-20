@@ -41,13 +41,17 @@ router.get("/", async (req, res, next) => {
       console.error("Fehler beim Abrufen der Binance-Daten:", err);
     }
   }
-  // Mergen: Für jedes Coin werden entsprechende Binance-Preis-Daten angehängt
+  // Mergen: Nur image und sparkline von CoinGecko, übrige Daten von Binance
   const mergedData = cachedData.map((coin: any) => {
     const coinSymbolUpper = coin.symbol.toUpperCase();
     const binanceInfo = binanceCache.find((ticker: any) =>
       ticker.symbol.endsWith(coinSymbolUpper)
     );
-    return { ...coin, binance: binanceInfo || null };
+    return {
+      image: coin.image,
+      sparkline: coin.sparkline_in_7d,
+      ...binanceInfo
+    };
   });
   res.send(mergedData);
 });
