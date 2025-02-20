@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { User } from "../models/User";
+import { DeletedToken } from "../models/DeletedToken";
 export interface CustomRequest extends Request {
   user?: any;
 }
@@ -10,8 +11,10 @@ export const checkToken = async (
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.cookies.jwt || req.body.token;
-
+  const token = req.body.token;
+  console.log(token);
+  const deletedToken = await DeletedToken.findOne({ token: token });
+  if (deletedToken?.token) return next(new Error("is logged out!"));
   if (!token) {
     return next(new Error("no token!"));
   }

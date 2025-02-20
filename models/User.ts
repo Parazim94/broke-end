@@ -12,6 +12,7 @@ const userSchema = new Schema(
     history: [Number], //trade.id
     positions: [Object], //coin.id amount
     favorites: [String],
+    token: { type: String },
   },
   { timestamps: true }
 );

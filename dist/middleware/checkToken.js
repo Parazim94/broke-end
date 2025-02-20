@@ -15,8 +15,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkToken = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const User_1 = require("../models/User");
+const DeletedToken_1 = require("../models/DeletedToken");
 const checkToken = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const token = req.cookies.jwt || req.body.token;
+    const token = req.body.token;
+    console.log(token);
+    const deletedToken = yield DeletedToken_1.DeletedToken.findOne({ token: token });
+    if (deletedToken === null || deletedToken === void 0 ? void 0 : deletedToken.token)
+        return next(new Error("is logged out!"));
     if (!token) {
         return next(new Error("no token!"));
     }

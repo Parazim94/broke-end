@@ -10,6 +10,6 @@ const createJwt = (email) => {
     if (!secret || !email) {
         throw new Error("No JWT_SECRET or no email!");
     }
-    return jsonwebtoken_1.default.sign({ email: email }, secret, { expiresIn: "1m" });
+    return jsonwebtoken_1.default.sign({ email: email }, secret, { expiresIn: "30m" });
 };
 exports.createJwt = createJwt;

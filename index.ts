@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import cookieParser from "cookie-parser";
+// import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import { connectDB } from "./libs/database";
 import authRoute from "./routes/authRouter";
@@ -17,15 +17,11 @@ dotenv.config();
 connectDB();
 const app = express();
 
-app.use(
-  cors({
-    credentials: true, // Erlaube das Senden von Cookies
-  })
-);
+app.use(cors());
 
 app.use(cors());
 app.use(express.json());
-app.use(cookieParser());
+// app.use(cookieParser());
 
 const PORT = process.env.PORT;
 

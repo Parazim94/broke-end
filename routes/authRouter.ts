@@ -29,12 +29,7 @@ router.post("/login", async (req, res, next) => {
     const user = await User.findOne({ email: email });
     if (user && user.hashedPW && (await compare(password, user.hashedPW))) {
       const jwt = createJwt(user.email);
-      res.cookie("jwt", jwt, {
-        httpOnly: true,
-        secure: false, // Setze dies auf true, wenn du HTTPS verwendest
-        sameSite: "lax",
-        maxAge: 3600000,
-      });
+      user.token = jwt;
       res.status(200).send(user);
     } else {
       throw new Error("Login Fehler");
@@ -45,12 +40,14 @@ router.post("/login", async (req, res, next) => {
 });
 
 router.get("/logout", async (req, res, next) => {
-  const token = req.cookies.jwt || req.body.token;
+  const token = req.body.token;
+  let message;
   if (token) {
     const deletedToken = await DeletedToken.create({ token: token });
-  }
-  res.clearCookie("jwt", { httpOnly: true, secure: false, sameSite: "lax" });
-  res.send("User logged out!");
+    message = "User logged out!";
+  } else message = "No user to log out!";
+
+  res.send(message);
 });
 
 router.get("/test", checkToken, (req, res, next) => {

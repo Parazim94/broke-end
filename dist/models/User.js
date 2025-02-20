@@ -13,6 +13,7 @@ const userSchema = new mongoose_1.Schema({
     history: [Number], //trade.id
     positions: [Object], //coin.id amount
     favorites: [String],
+    token: { type: String },
 }, { timestamps: true });
 userSchema.methods.toJSON = function () {
     const obj = this.toObject();
