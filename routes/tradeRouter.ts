@@ -22,14 +22,22 @@ router.post("/", checkToken, async (req: CustomRequest, res, next) => {
       if (value > 0) {
         if (value * price > user.cash) throw new Error("not enough cash!");
         user.cash -= value * price;
+        if (!user.positions[binanceSymbol]) {
+          user.positions[binanceSymbol] = 0;
+        }
         user.positions[binanceSymbol] += value;
       }
       if (value < 0) {
-        if (-value > user.positions[binanceSymbol])
+        if (
+          -value > user.positions[binanceSymbol] ||
+          !user.positions[binanceSymbol]
+        ) {
           throw new Error(`not enough ${symbol}`);
+        }
         user.cash -= value * price;
         user.positions[binanceSymbol] += value;
       }
+      console.log(user.cash);
       await User.updateOne({ _id: user._id }, user);
       res.send(user);
     }
