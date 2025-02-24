@@ -26,7 +26,7 @@ export const checkToken = async (
   try {
     const payload = jwt.verify(token, secret);
     if (typeof payload !== "string" && "email" in payload) {
-      req.user = await User.find({ email: payload.email });
+      req.user = await User.findOne({ email: payload.email });
     } else {
       return next(new Error("Invalid token payload"));
     }

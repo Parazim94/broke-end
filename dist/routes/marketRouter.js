@@ -22,9 +22,9 @@ let binanceCache = [];
 let lastBinanceFetchTime = 0;
 router.get("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const now = Date.now();
-    const halfminute = 30 * 1000;
-    // Prüfen, ob CoinGecko-Daten älter als 30 Sekunden sind
-    if (!cachedData || now - lastFetchTime > halfminute) {
+    const fetchDelay = 30 * 1000;
+    // CoinGecko-Daten abrufen, falls älter als 30 Sekunden
+    if (!cachedData || now - lastFetchTime > fetchDelay) {
         try {
             const response = yield fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=true");
             const data = yield response.json();
@@ -63,12 +63,31 @@ router.get("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
             console.error("Fehler beim Abrufen der Binance-Daten:", err);
         }
     }
-    // Sicherstellen, dass binanceCache ein Array ist, bevor find() aufgerufen wird
+    // Mergen: Nur image und sparkline von CoinGecko, übrige Daten von Binance
     const mergedData = cachedData.map((coin) => {
         const coinSymbolUpper = coin.symbol.toUpperCase();
         const binanceInfo = Array.isArray(binanceCache) &&
             binanceCache.find((ticker) => ticker.symbol.endsWith(coinSymbolUpper));
-        return Object.assign({ image: coin.image, sparkline: coin.sparkline_in_7d }, binanceInfo);
+        console.log(binanceInfo);
+        return {
+            id: coin.id,
+            name: coin.name,
+            symbol: coin.symbol,
+            current_price: binanceInfo
+                ? Number(binanceInfo.lastPrice)
+                : coin.current_price,
+            price_change_percentage_24h: binanceInfo
+                ? Number(binanceInfo.priceChangePercent)
+                : coin.price_change_percentage_24h,
+            high_24h: binanceInfo ? Number(binanceInfo.highPrice) : coin.high_24h,
+            low_24h: binanceInfo ? Number(binanceInfo.lowPrice) : coin.low_24h,
+            total_volume: binanceInfo
+                ? Number(binanceInfo.volume)
+                : coin.total_volume,
+            market_cap: coin.market_cap,
+            image: coin.image,
+            sparkline: coin.sparkline_in_7d,
+        };
     });
     res.send(mergedData);
 }));

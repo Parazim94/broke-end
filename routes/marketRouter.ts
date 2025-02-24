@@ -11,9 +11,9 @@ let lastBinanceFetchTime: number = 0;
 
 router.get("/", async (req, res, next) => {
   const now = Date.now();
-  const halfminute = 30 * 1000;
+  const fetchDelay = 30 * 1000;
   // CoinGecko-Daten abrufen, falls älter als 30 Sekunden
-  if (!cachedData || now - lastFetchTime > halfminute) {
+  if (!cachedData || now - lastFetchTime > fetchDelay) {
     try {
       const response = await fetch(
         "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=true"
@@ -60,16 +60,22 @@ router.get("/", async (req, res, next) => {
       binanceCache.find((ticker: any) =>
         ticker.symbol.endsWith(coinSymbolUpper)
       );
-
+    console.log(binanceInfo);
     return {
       id: coin.id,
       name: coin.name,
       symbol: coin.symbol,
-      current_price: binanceInfo ? Number(binanceInfo.lastPrice) : coin.current_price,
-      price_change_percentage_24h: binanceInfo ? Number(binanceInfo.priceChangePercent) : coin.price_change_percentage_24h,
+      current_price: binanceInfo
+        ? Number(binanceInfo.lastPrice)
+        : coin.current_price,
+      price_change_percentage_24h: binanceInfo
+        ? Number(binanceInfo.priceChangePercent)
+        : coin.price_change_percentage_24h,
       high_24h: binanceInfo ? Number(binanceInfo.highPrice) : coin.high_24h,
       low_24h: binanceInfo ? Number(binanceInfo.lowPrice) : coin.low_24h,
-      total_volume: binanceInfo ? Number(binanceInfo.volume) : coin.total_volume,
+      total_volume: binanceInfo
+        ? Number(binanceInfo.volume)
+        : coin.total_volume,
       market_cap: coin.market_cap,
       image: coin.image,
       sparkline: coin.sparkline_in_7d,

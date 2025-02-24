@@ -10,6 +10,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const database_1 = require("./libs/database");
 const authRouter_1 = __importDefault(require("./routes/authRouter"));
 const marketRouter_1 = __importDefault(require("./routes/marketRouter"));
+const tradeRouter_1 = __importDefault(require("./routes/tradeRouter"));
 dotenv_1.default.config();
 (0, database_1.connectDB)();
 const app = (0, express_1.default)();
@@ -20,6 +21,7 @@ app.use(express_1.default.json());
 const PORT = process.env.PORT;
 app.use("/auth", authRouter_1.default);
 app.use("/marketData", marketRouter_1.default);
+app.use("/trade", tradeRouter_1.default);
 app.use("*", (req, res, next) => {
     res.send("Oioioi,site not found!");
 });

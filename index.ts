@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 import { connectDB } from "./libs/database";
 import authRoute from "./routes/authRouter";
 import marketRoute from "./routes/marketRouter";
-
+import tradeRoute from "./routes/tradeRouter";
 interface Error {
   message: string;
 }
@@ -28,6 +28,8 @@ const PORT = process.env.PORT;
 app.use("/auth", authRoute);
 
 app.use("/marketData", marketRoute);
+
+app.use("/trade", tradeRoute);
 
 app.use("*", (req, res, next) => {
   res.send("Oioioi,site not found!");

@@ -33,7 +33,7 @@ const checkToken = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     try {
         const payload = jsonwebtoken_1.default.verify(token, secret);
         if (typeof payload !== "string" && "email" in payload) {
-            req.user = yield User_1.User.find({ email: payload.email });
+            req.user = yield User_1.User.findOne({ email: payload.email });
         }
         else {
             return next(new Error("Invalid token payload"));
