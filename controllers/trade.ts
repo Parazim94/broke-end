@@ -11,7 +11,11 @@ const trade = async (
       `https://api.binance.com/api/v3/ticker/price?symbol=${binanceSymbol}`
     );
     const data = await response.json();
-    const price = data.price;
+    const price = await data.price;
+    if (!price)
+      throw new Error(
+        `preis stimmt nicht: ${price}   Bsymbol${binanceSymbol} symbol ${symbol} data:${data.symbol}, ${data.price}`
+      );
     if (value === 0) throw new Error("sehr witzig...");
     if (value > 0) {
       if (value * price > user.cash) throw new Error("not enough cash!");
@@ -25,7 +29,10 @@ const trade = async (
       if (-value > user.positions[symbol] || !user.positions[symbol]) {
         throw new Error(`not enough ${symbol}`);
       }
-      user.cash -= value * price;
+
+      const dCash = value * price;
+
+      user.cash = user.cash - dCash;
       user.positions[symbol] += value;
     }
     console.log(user.cash);
