@@ -1,5 +1,12 @@
 import { Schema, model } from "mongoose";
 
+const historySchema = new Schema(
+  {
+    total: Number,
+    date: Date,
+  },
+  { _id: false } // Disable _id for history subdocuments
+);
 const userSchema = new Schema(
   {
     userName: String,
@@ -9,7 +16,7 @@ const userSchema = new Schema(
     isVerified: { type: Boolean, default: false },
     hashedPW: { type: String, required: true },
     cash: { type: Number, default: 10000 },
-    history: [Number], //trade.id
+    history: [historySchema], //trade.id
     positions: { type: Object, default: {} }, //symbol,value
     favorites: [String],
     prefTheme: [String],

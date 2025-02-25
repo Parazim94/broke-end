@@ -7,6 +7,7 @@ import authRoute from "./routes/authRouter";
 import marketRoute from "./routes/marketRouter";
 import tradeRoute from "./routes/tradeRouter";
 import settingsRoute from "./routes/settingsRouter";
+import { dailyStore } from "./libs/dailyStore";
 interface Error {
   message: string;
 }
@@ -17,6 +18,8 @@ interface NextFunction extends express.NextFunction {}
 dotenv.config();
 connectDB();
 const app = express();
+
+dailyStore();
 
 app.use(cors());
 

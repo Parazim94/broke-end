@@ -22,34 +22,6 @@ router.post("/", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, 
         const binanceSymbol = symbol.toUpperCase() + "USDT";
         const user = req.user;
         const UserAfterTrade = yield (0, trade_1.default)(symbol, binanceSymbol, value, user);
-        // if (binanceSymbol) {
-        //   const response = await fetch(
-        //     `https://api.binance.com/api/v3/ticker/price?symbol=${binanceSymbol}`
-        //   );
-        //   const data = await response.json();
-        //   const price = data.price;
-        //   if (value === 0) throw new Error("sehr witzig...");
-        //   if (value > 0) {
-        //     if (value * price > user.cash) throw new Error("not enough cash!");
-        //     user.cash -= value * price;
-        //     if (!user.positions[binanceSymbol]) {
-        //       user.positions[binanceSymbol] = 0;
-        //     }
-        //     user.positions[binanceSymbol] += value;
-        //   }
-        //   if (value < 0) {
-        //     if (
-        //       -value > user.positions[binanceSymbol] ||
-        //       !user.positions[binanceSymbol]
-        //     ) {
-        //       throw new Error(`not enough ${symbol}`);
-        //     }
-        //     user.cash -= value * price;
-        //     user.positions[binanceSymbol] += value;
-        //   }
-        //   console.log(user.cash);
-        //   await User.updateOne({ _id: user._id }, user);
-        //   res.send(user);
         res.send(UserAfterTrade);
     }
     catch (error) {
