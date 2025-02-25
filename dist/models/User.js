@@ -13,6 +13,7 @@ const userSchema = new mongoose_1.Schema({
     history: [Number], //trade.id
     positions: { type: Object, default: { BTCUSDT: 0 } }, //coin.id amount
     favorites: [String],
+    prefTheme: [String],
     token: { type: String },
 }, { timestamps: true });
 userSchema.methods.toJSON = function () {

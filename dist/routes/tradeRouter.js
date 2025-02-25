@@ -21,7 +21,7 @@ router.post("/", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, 
         const { symbol, value } = req.body;
         const binanceSymbol = symbol.toUpperCase() + "USDT";
         const user = req.user;
-        const UserAfterTrade = yield (0, trade_1.default)(binanceSymbol, value, user);
+        const UserAfterTrade = yield (0, trade_1.default)(symbol, binanceSymbol, value, user);
         // if (binanceSymbol) {
         //   const response = await fetch(
         //     `https://api.binance.com/api/v3/ticker/price?symbol=${binanceSymbol}`

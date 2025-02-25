@@ -12,6 +12,7 @@ const userSchema = new Schema(
     history: [Number], //trade.id
     positions: { type: Object, default: { BTCUSDT: 0 } }, //coin.id amount
     favorites: [String],
+    prefTheme: [String],
     token: { type: String },
   },
   { timestamps: true }

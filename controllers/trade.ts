@@ -1,4 +1,5 @@
 import { User } from "../models/User";
+import { createJwt } from "../libs/jwt";
 const trade = async (
   symbol: string,
   binanceSymbol: string,
@@ -29,6 +30,8 @@ const trade = async (
     }
     console.log(user.cash);
     await User.updateOne({ _id: user._id }, user);
+    //token erneuern
+    user.token = createJwt(user.email);
     return user;
     // res.send(user);
   }

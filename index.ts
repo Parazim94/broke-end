@@ -6,6 +6,7 @@ import { connectDB } from "./libs/database";
 import authRoute from "./routes/authRouter";
 import marketRoute from "./routes/marketRouter";
 import tradeRoute from "./routes/tradeRouter";
+import settingsRoute from "./routes/settingsRouter";
 interface Error {
   message: string;
 }
@@ -31,6 +32,7 @@ app.use("/marketData", marketRoute);
 
 app.use("/trade", tradeRoute);
 
+app.use("/settings", settingsRoute);
 app.use("*", (req, res, next) => {
   res.send("Oioioi,site not found!");
 });
