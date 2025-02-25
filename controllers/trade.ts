@@ -37,7 +37,7 @@ const trade = async (
       user.cash = user.cash - dCash;
       user.positions[symbol] += value;
     }
-    console.log(user.cash);
+    if (user.positions[symbol] === 0) delete user.positions[symbol];
     await User.updateOne({ _id: user._id }, user);
     //token erneuern
     user.token = createJwt(user.email);

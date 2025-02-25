@@ -13,9 +13,13 @@ const User_1 = require("../models/User");
 const jwt_1 = require("../libs/jwt");
 const trade = (symbol, binanceSymbol, value, user) => __awaiter(void 0, void 0, void 0, function* () {
     if (binanceSymbol) {
-        const response = yield fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${binanceSymbol}`);
+        const response = yield fetch(`https://api.binance.us/api/v3/ticker/price?symbol=${binanceSymbol}`);
+        if (!response.ok)
+            throw new Error(`kein fetch!: ${response.status} ${response.statusText}`);
         const data = yield response.json();
-        const price = data.price;
+        const price = yield data.price;
+        if (!price)
+            throw new Error(`preis stimmt nicht: ${price}   Bsymbol${binanceSymbol} symbol ${symbol} data:${data.symbol}, ${data.price}`);
         if (value === 0)
             throw new Error("sehr witzig...");
         if (value > 0) {
@@ -31,10 +35,12 @@ const trade = (symbol, binanceSymbol, value, user) => __awaiter(void 0, void 0, 
             if (-value > user.positions[symbol] || !user.positions[symbol]) {
                 throw new Error(`not enough ${symbol}`);
             }
-            user.cash -= value * price;
+            const dCash = value * price;
+            user.cash = user.cash - dCash;
             user.positions[symbol] += value;
         }
-        console.log(user.cash);
+        if (user.positions[symbol] === 0)
+            delete user.positions[symbol];
         yield User_1.User.updateOne({ _id: user._id }, user);
         //token erneuern
         user.token = (0, jwt_1.createJwt)(user.email);
