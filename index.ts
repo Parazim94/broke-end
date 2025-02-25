@@ -36,6 +36,7 @@ app.use("/marketData", marketRoute);
 app.use("/trade", tradeRoute);
 
 app.use("/settings", settingsRoute);
+
 app.use("*", (req, res, next) => {
   res.send("Oioioi,site not found!");
 });
