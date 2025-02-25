@@ -36,7 +36,7 @@ router.get("/", async (req, res, next) => {
     }
   }
   // Überprüfen, ob Binance-Daten älter als 1 Sekunde sind
-  if (now - lastBinanceFetchTime > 1000) {
+  if (now - lastBinanceFetchTime > 10000) {
     try {
       const binanceResp = await fetch(
         "https://api.binance.com/api/v3/ticker/24hr"

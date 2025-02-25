@@ -8,8 +8,10 @@ const trade = async (
 ) => {
   if (binanceSymbol) {
     const response = await fetch(
-      `https://api.binance.com/api/v3/ticker/price?symbol=${binanceSymbol}`
+      `https://api.binance.us/api/v3/ticker/price?symbol=${binanceSymbol}`
     );
+    if (!response.ok)
+      throw new Error(`kein fetch!: ${response.status} ${response.statusText}`);
     const data = await response.json();
     const price = await data.price;
     if (!price)
