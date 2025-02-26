@@ -1,13 +1,16 @@
-import { now } from "mongoose";
 import { User } from "../models/User";
 
 export function dailyStore(): void {
-  const now: Date = new Date();
-  const midnight: Date = new Date(now);
+  const now = new Date();
+  console.log(now);
+
+  const midnight = new Date(now);
+
   midnight.setHours(24, 0, 0, 0); // Set to next midnight
-
-  const timeUntilMidnight: number = midnight.getTime() - now.getTime(); // Time in milliseconds until midnight
-
+  console.log(midnight);
+  let timeUntilMidnight: number = midnight.getTime() - now.getTime(); // Time in milliseconds until midnight
+  console.log(timeUntilMidnight);
+  timeUntilMidnight = 3600000;
   // Set a timeout to run the task at midnight
   setTimeout(() => {
     runAtMidnight(); // Execute the task
@@ -34,7 +37,7 @@ async function runAtMidnight(): Promise<void> {
         total += price * user.positions[key];
       } catch (error) {}
     });
-    user.history = [] as any;
+    
     const date = Date.now();
     user.history.push({ total, date });
     await user.save();

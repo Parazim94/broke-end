@@ -17,7 +17,7 @@ const userSchema = new Schema(
     hashedPW: { type: String, required: true },
     cash: { type: Number, default: 10000 },
     history: [historySchema], //trade.id
-    positions: { type: Object, default: {} }, //symbol,value
+    positions: { type: Object, default: { Object } }, //symbol,value
     favorites: [String],
     prefTheme: [String],
     token: { type: String },

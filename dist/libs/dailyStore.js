@@ -13,9 +13,13 @@ exports.dailyStore = dailyStore;
 const User_1 = require("../models/User");
 function dailyStore() {
     const now = new Date();
+    console.log(now);
     const midnight = new Date(now);
     midnight.setHours(24, 0, 0, 0); // Set to next midnight
-    const timeUntilMidnight = midnight.getTime() - now.getTime(); // Time in milliseconds until midnight
+    console.log(midnight);
+    let timeUntilMidnight = midnight.getTime() - now.getTime(); // Time in milliseconds until midnight
+    console.log(timeUntilMidnight);
+    timeUntilMidnight = 3600000;
     // Set a timeout to run the task at midnight
     setTimeout(() => {
         runAtMidnight(); // Execute the task
@@ -38,7 +42,6 @@ function runAtMidnight() {
                 }
                 catch (error) { }
             }));
-            user.history = [];
             const date = Date.now();
             user.history.push({ total, date });
             yield user.save();
