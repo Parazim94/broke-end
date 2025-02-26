@@ -16,10 +16,8 @@ function dailyStore() {
     console.log(now);
     const midnight = new Date(now);
     midnight.setHours(24, 0, 0, 0); // Set to next midnight
-    console.log(midnight);
     let timeUntilMidnight = midnight.getTime() - now.getTime(); // Time in milliseconds until midnight
-    console.log(timeUntilMidnight);
-    timeUntilMidnight = 3600000;
+    timeUntilMidnight = 5000;
     // Set a timeout to run the task at midnight
     setTimeout(() => {
         runAtMidnight(); // Execute the task
@@ -29,23 +27,26 @@ function dailyStore() {
 function runAtMidnight() {
     return __awaiter(this, void 0, void 0, function* () {
         const users = yield User_1.User.find();
-        users.forEach((user) => __awaiter(this, void 0, void 0, function* () {
+        // Process each user one at a time
+        for (const user of users) {
             let total = user.cash;
-            yield Object.keys(user.positions).forEach((key) => __awaiter(this, void 0, void 0, function* () {
+            const positions = Object.keys(user.positions);
+            // Process each position one at a time
+            for (const key of positions) {
                 const binanceSymbol = key.toUpperCase() + "USDT";
-                try {
-                    const response = yield fetch(`https://api.binance.us/api/v3/ticker/price?symbol=${binanceSymbol}`);
-                    if (!response.ok)
-                        throw new Error("Fehler beim taeglichen price-fetching");
-                    const price = yield response.json();
-                    total += price * user.positions[key];
-                }
-                catch (error) { }
-            }));
+                const response = yield fetch(`https://api.binance.us/api/v3/ticker/price?symbol=${binanceSymbol}`);
+                if (!response.ok)
+                    throw new Error("Fehler beim taeglichen price-fetching");
+                const data = yield response.json();
+                // console.log(user.email, data);
+                total += data.price * user.positions[key];
+                // console.log(user.email, key, user.positions[key], data.price, total);
+            }
             const date = Date.now();
-            user.history.push({ total, date });
-            yield user.save();
-            console.log(user.history);
-        }));
+            // console.log("total:");
+            console.log(user.email, total);
+            // user.history.push({ total, date });
+            // await user.save();
+        }
     });
 }

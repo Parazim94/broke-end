@@ -7,9 +7,9 @@ export function dailyStore(): void {
   const midnight = new Date(now);
 
   midnight.setHours(24, 0, 0, 0); // Set to next midnight
-  console.log(midnight);
+
   let timeUntilMidnight: number = midnight.getTime() - now.getTime(); // Time in milliseconds until midnight
-  console.log(timeUntilMidnight);
+
   timeUntilMidnight = 3600000;
   // Set a timeout to run the task at midnight
   setTimeout(() => {
@@ -21,27 +21,30 @@ export function dailyStore(): void {
 async function runAtMidnight(): Promise<void> {
   const users = await User.find();
 
-  users.forEach(async (user) => {
+  // Process each user one at a time
+  for (const user of users) {
     let total: number = user.cash;
-    await Object.keys(user.positions).forEach(async (key) => {
+    const positions = Object.keys(user.positions);
+
+    // Process each position one at a time
+    for (const key of positions) {
       const binanceSymbol = key.toUpperCase() + "USDT";
-      try {
-        const response = await fetch(
-          `https://api.binance.us/api/v3/ticker/price?symbol=${binanceSymbol}`
-        );
 
-        if (!response.ok)
-          throw new Error("Fehler beim taeglichen price-fetching");
+      const response = await fetch(
+        `https://api.binance.us/api/v3/ticker/price?symbol=${binanceSymbol}`
+      );
 
-        const price = await response.json();
-        total += price * user.positions[key];
-      } catch (error) {}
-    });
-    
+      if (!response.ok)
+        throw new Error("Fehler beim taeglichen price-fetching");
+
+      const data = await response.json();
+
+      total += data.price * user.positions[key];
+    }
+
     const date = Date.now();
+
     user.history.push({ total, date });
     await user.save();
-
-    console.log(user.history);
-  });
+  }
 }
