@@ -19,6 +19,11 @@ const router = express_1.default.Router();
 router.post("/", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log("updateOne falsch");
+        //loeschen,damit das nicht geaendert wird
+        delete req.body.cash;
+        delete req.body.positions;
+        delete req.body.history;
+        delete req.body.isVerified;
         yield User_1.User.updateOne({ email: req.user.email }, req.body);
         const user = yield User_1.User.findOne({ email: req.user.email });
         res.send(user);

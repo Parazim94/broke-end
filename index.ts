@@ -8,6 +8,7 @@ import marketRoute from "./routes/marketRouter";
 import tradeRoute from "./routes/tradeRouter";
 import settingsRoute from "./routes/settingsRouter";
 import { runAtMidnight } from "./libs/dailyStore";
+import { deleteOldToken } from "./libs/deleteOldToken";
 interface Error {
   message: string;
 }
@@ -20,12 +21,12 @@ connectDB();
 const app = express();
 
 // dailyStore();
+// deleteOldToken();
 
 app.use(cors());
 
 app.use(cors());
 app.use(express.json());
-// app.use(cookieParser());
 
 const PORT = process.env.PORT;
 
