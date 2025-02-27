@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const checkToken_1 = require("../middleware/checkToken");
+const Orders_1 = require("../models/Orders");
 const trade_1 = __importDefault(require("../controllers/trade"));
 const router = express_1.default.Router();
 router.post("/", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -23,6 +24,24 @@ router.post("/", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, 
         const user = req.user;
         const UserAfterTrade = yield (0, trade_1.default)(symbol, binanceSymbol, value, user);
         res.send(UserAfterTrade);
+    }
+    catch (error) {
+        next(error);
+    }
+}));
+router.post("/order", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { symbol, amount, threshold } = req.body;
+    try {
+        const { symbol, amount, threshold } = req.body;
+        if (!symbol || !amount || !threshold)
+            throw new Error("wrong data to order");
+        const newOrder = yield Orders_1.Order.create({
+            symbol,
+            amount,
+            threshold,
+            user_id: req.user._id,
+        });
+        res.send(newOrder);
     }
     catch (error) {
         next(error);

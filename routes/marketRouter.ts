@@ -1,5 +1,5 @@
 import express from "express";
-
+import { manageOrders } from "../controllers/manageOrders";
 const router = express.Router();
 
 // Globale Cache-Variablen für CoinGecko
@@ -42,6 +42,10 @@ router.get("/", async (req, res, next) => {
         "https://api.binance.com/api/v3/ticker/24hr"
       );
       const binanceData = await binanceResp.json();
+
+      //orders check
+      manageOrders(binanceData);
+
       if (Array.isArray(binanceData)) {
         binanceCache = binanceData;
         lastBinanceFetchTime = now;

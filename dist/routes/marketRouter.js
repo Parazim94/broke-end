@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const manageOrders_1 = require("../controllers/manageOrders");
 const router = express_1.default.Router();
 // Globale Cache-Variablen für CoinGecko
 let cachedData = null;
@@ -51,6 +52,8 @@ router.get("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
         try {
             const binanceResp = yield fetch("https://api.binance.com/api/v3/ticker/24hr");
             const binanceData = yield binanceResp.json();
+            //orders check
+            (0, manageOrders_1.manageOrders)(binanceData);
             if (Array.isArray(binanceData)) {
                 binanceCache = binanceData;
                 lastBinanceFetchTime = now;
