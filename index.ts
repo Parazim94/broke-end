@@ -7,7 +7,7 @@ import authRoute from "./routes/authRouter";
 import marketRoute from "./routes/marketRouter";
 import tradeRoute from "./routes/tradeRouter";
 import settingsRoute from "./routes/settingsRouter";
-import { dailyStore } from "./libs/dailyStore";
+import { runAtMidnight } from "./libs/dailyStore";
 interface Error {
   message: string;
 }
@@ -19,7 +19,7 @@ dotenv.config();
 connectDB();
 const app = express();
 
-dailyStore();
+// dailyStore();
 
 app.use(cors());
 
@@ -37,8 +37,13 @@ app.use("/trade", tradeRoute);
 
 app.use("/settings", settingsRoute);
 
+app.use("/api/cron", async (req, res, send) => {
+  await runAtMidnight();
+  res.status(202).json({ message: "daily fetch" });
+});
+
 app.use("*", (req, res, next) => {
-  res.send("Oioioi,site not found!");
+  res.status(404).send("Oioioi,site not found!");
 });
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

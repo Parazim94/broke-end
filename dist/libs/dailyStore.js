@@ -9,21 +9,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.dailyStore = dailyStore;
+exports.runAtMidnight = runAtMidnight;
 const User_1 = require("../models/User");
-function dailyStore() {
-    const now = new Date();
-    console.log(now);
-    const midnight = new Date(now);
-    midnight.setHours(24, 0, 0, 0); // Set to next midnight
-    let timeUntilMidnight = midnight.getTime() - now.getTime(); // Time in milliseconds until midnight
-    timeUntilMidnight = 5000;
-    // Set a timeout to run the task at midnight
-    setTimeout(() => {
-        runAtMidnight(); // Execute the task
-        dailyStore(); // Schedule the task again for the next day
-    }, timeUntilMidnight);
-}
+// export function dailyStore(): void {
+//   const now = new Date();
+//   console.log(now);
+//   const midnight = new Date(now);
+//   midnight.setHours(24, 0, 0, 0); // Set to next midnight
+//   let timeUntilMidnight: number = midnight.getTime() - now.getTime(); // Time in milliseconds until midnight
+//   timeUntilMidnight = 60000;
+//   // Set a timeout to run the task at midnight
+//   setTimeout(() => {
+//     runAtMidnight(); // Execute the task
+//     dailyStore(); // Schedule the task again for the next day
+//   }, timeUntilMidnight);
+// }
 function runAtMidnight() {
     return __awaiter(this, void 0, void 0, function* () {
         const users = yield User_1.User.find();
@@ -38,15 +38,11 @@ function runAtMidnight() {
                 if (!response.ok)
                     throw new Error("Fehler beim taeglichen price-fetching");
                 const data = yield response.json();
-                // console.log(user.email, data);
                 total += data.price * user.positions[key];
-                // console.log(user.email, key, user.positions[key], data.price, total);
             }
             const date = Date.now();
-            // console.log("total:");
-            console.log(user.email, total);
-            // user.history.push({ total, date });
-            // await user.save();
+            user.history.push({ total, date });
+            yield user.save();
         }
     });
 }

@@ -12,11 +12,10 @@ const authRouter_1 = __importDefault(require("./routes/authRouter"));
 const marketRouter_1 = __importDefault(require("./routes/marketRouter"));
 const tradeRouter_1 = __importDefault(require("./routes/tradeRouter"));
 const settingsRouter_1 = __importDefault(require("./routes/settingsRouter"));
-const dailyStore_1 = require("./libs/dailyStore");
 dotenv_1.default.config();
 (0, database_1.connectDB)();
 const app = (0, express_1.default)();
-(0, dailyStore_1.dailyStore)();
+// dailyStore();
 app.use((0, cors_1.default)());
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
@@ -26,6 +25,10 @@ app.use("/auth", authRouter_1.default);
 app.use("/marketData", marketRouter_1.default);
 app.use("/trade", tradeRouter_1.default);
 app.use("/settings", settingsRouter_1.default);
+// app.use("/daily", (req, res, send) => {
+//   runAtMidnight();
+//   res.send("daily fetch");
+// });
 app.use("*", (req, res, next) => {
     res.send("Oioioi,site not found!");
 });

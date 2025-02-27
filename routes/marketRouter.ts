@@ -60,7 +60,7 @@ router.get("/", async (req, res, next) => {
       binanceCache.find((ticker: any) =>
         ticker.symbol.endsWith(coinSymbolUpper)
       );
-    console.log(binanceInfo);
+    // console.log(binanceInfo);
     return {
       id: coin.id,
       name: coin.name,

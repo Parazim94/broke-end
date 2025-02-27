@@ -68,7 +68,7 @@ router.get("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
         const coinSymbolUpper = coin.symbol.toUpperCase();
         const binanceInfo = Array.isArray(binanceCache) &&
             binanceCache.find((ticker) => ticker.symbol.endsWith(coinSymbolUpper));
-        console.log(binanceInfo);
+        // console.log(binanceInfo);
         return {
             id: coin.id,
             name: coin.name,
