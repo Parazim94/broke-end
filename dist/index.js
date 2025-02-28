@@ -20,7 +20,7 @@ const database_1 = require("./libs/database");
 const authRouter_1 = __importDefault(require("./routes/authRouter"));
 const marketRouter_1 = __importDefault(require("./routes/marketRouter"));
 const tradeRouter_1 = __importDefault(require("./routes/tradeRouter"));
-const settingsRouter_1 = __importDefault(require("./routes/settingsRouter"));
+const userRouter_1 = __importDefault(require("./routes/userRouter"));
 const dailyStore_1 = require("./libs/dailyStore");
 dotenv_1.default.config();
 (0, database_1.connectDB)();
@@ -34,7 +34,7 @@ const PORT = process.env.PORT;
 app.use("/auth", authRouter_1.default);
 app.use("/marketData", marketRouter_1.default);
 app.use("/trade", tradeRouter_1.default);
-app.use("/settings", settingsRouter_1.default);
+app.use("/user", userRouter_1.default);
 app.use("/api/cron", (req, res, send) => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, dailyStore_1.runAtMidnight)();
     res.status(202).json({ message: "daily fetch" });

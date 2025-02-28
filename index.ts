@@ -6,7 +6,7 @@ import { connectDB } from "./libs/database";
 import authRoute from "./routes/authRouter";
 import marketRoute from "./routes/marketRouter";
 import tradeRoute from "./routes/tradeRouter";
-import settingsRoute from "./routes/settingsRouter";
+import userRoute from "./routes/userRouter";
 import { runAtMidnight } from "./libs/dailyStore";
 import { deleteOldToken } from "./libs/deleteOldToken";
 interface Error {
@@ -36,7 +36,7 @@ app.use("/marketData", marketRoute);
 
 app.use("/trade", tradeRoute);
 
-app.use("/settings", settingsRoute);
+app.use("/user", userRoute);
 
 app.use("/api/cron", async (req, res, send) => {
   await runAtMidnight();

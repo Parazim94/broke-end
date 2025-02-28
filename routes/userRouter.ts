@@ -1,13 +1,12 @@
 import express from "express";
 import { checkToken, CustomRequest } from "../middleware/checkToken";
 import { User } from "../models/User";
+import { Order } from "../models/Orders";
 import { findPackageJSON } from "module";
 const router = express.Router();
 
-router.post("/", checkToken, async (req: CustomRequest, res, next) => {
+router.post("/settings", checkToken, async (req: CustomRequest, res, next) => {
   try {
-    console.log("updateOne falsch");
-
     //loeschen,damit das nicht geaendert wird
     delete req.body.cash;
     delete req.body.positions;
@@ -19,6 +18,15 @@ router.post("/", checkToken, async (req: CustomRequest, res, next) => {
     res.send(user);
   } catch (error) {
     console.error("Fehler beim updaten!", error);
+  }
+});
+
+router.get("/", checkToken, async (req: CustomRequest, res, next) => {
+  try {
+    const orders = await Order.find({ user_id: req.user._id });
+    res.send({ user: req.user, orders });
+  } catch (error) {
+    next(error);
   }
 });
 export default router;

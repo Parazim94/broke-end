@@ -21,7 +21,6 @@ router.post("/", checkToken, async (req: CustomRequest, res, next) => {
 });
 
 router.post("/order", checkToken, async (req: CustomRequest, res, next) => {
-  const { symbol, amount, threshold } = req.body;
   try {
     const { symbol, amount, threshold } = req.body;
     if (!symbol || !amount || !threshold)
@@ -33,7 +32,7 @@ router.post("/order", checkToken, async (req: CustomRequest, res, next) => {
       threshold,
       user_id: req.user._id,
     });
-    res.send(newOrder);
+    res.send(req.user);
   } catch (error) {
     next(error);
   }

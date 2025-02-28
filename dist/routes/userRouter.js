@@ -14,33 +14,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const checkToken_1 = require("../middleware/checkToken");
+const User_1 = require("../models/User");
 const Orders_1 = require("../models/Orders");
-const trade_1 = __importDefault(require("../controllers/trade"));
 const router = express_1.default.Router();
-router.post("/", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/settings", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { symbol, value } = req.body;
-        const binanceSymbol = symbol.toUpperCase() + "USDT";
-        const user = req.user;
-        const UserAfterTrade = yield (0, trade_1.default)(symbol, binanceSymbol, value, user);
-        res.send(UserAfterTrade);
+        //loeschen,damit das nicht geaendert wird
+        delete req.body.cash;
+        delete req.body.positions;
+        delete req.body.history;
+        delete req.body.isVerified;
+        yield User_1.User.updateOne({ email: req.user.email }, req.body);
+        const user = yield User_1.User.findOne({ email: req.user.email });
+        res.send(user);
     }
     catch (error) {
-        next(error);
+        console.error("Fehler beim updaten!", error);
     }
 }));
-router.post("/order", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { symbol, amount, threshold } = req.body;
-        if (!symbol || !amount || !threshold)
-            throw new Error("wrong data to order");
-        const newOrder = yield Orders_1.Order.create({
-            symbol,
-            amount,
-            threshold,
-            user_id: req.user._id,
-        });
-        res.send(req.user);
+        const orders = yield Orders_1.Order.find({ user_id: req.user._id });
+        res.send({ user: req.user, orders });
     }
     catch (error) {
         next(error);
