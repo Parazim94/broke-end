@@ -50,7 +50,7 @@ router.get("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
     // Überprüfen, ob Binance-Daten älter als 1 Sekunde sind
     if (now - lastBinanceFetchTime > 10000) {
         try {
-            const binanceResp = yield fetch("https://api.binance.com/api/v3/ticker/24hr");
+            const binanceResp = yield fetch("https://api.binance.us/api/v3/ticker/24hr");
             const binanceData = yield binanceResp.json();
             //orders check
             (0, manageOrders_1.manageOrders)(binanceData);

@@ -39,7 +39,7 @@ router.get("/", async (req, res, next) => {
   if (now - lastBinanceFetchTime > 10000) {
     try {
       const binanceResp = await fetch(
-        "https://api.binance.com/api/v3/ticker/24hr"
+        "https://api.binance.us/api/v3/ticker/24hr"
       );
       const binanceData = await binanceResp.json();
 
