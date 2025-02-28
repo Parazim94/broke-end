@@ -36,19 +36,28 @@ router.get("/", async (req, res, next) => {
     }
   }
   // Überprüfen, ob Binance-Daten älter als 1 Sekunde sind
+  // console.log(now - lastBinanceFetchTime);
   if (now - lastBinanceFetchTime > 10000) {
     try {
       const binanceResp = await fetch(
         "https://api.binance.us/api/v3/ticker/24hr"
       );
       const binanceData = await binanceResp.json();
-
+      console.log("huhu");
       //orders check
-      manageOrders(binanceData);
+      // manageOrders(binanceData);
 
       if (Array.isArray(binanceData)) {
         binanceCache = binanceData;
         lastBinanceFetchTime = now;
+
+        // const currentprice = binanceData.map((coin) => {
+        //   return { coin: coin.symbol, value: coin.lastPrice };
+        // });
+        // res.send(currentprice);
+        console.log(
+          binanceCache.find((ticker: any) => ticker.symbol.endsWith("BTCUSDT"))
+        );
       } else {
         console.error("Binance API gab kein Array zurück:", binanceData);
       }
@@ -59,12 +68,13 @@ router.get("/", async (req, res, next) => {
   // Mergen: Nur image und sparkline von CoinGecko, übrige Daten von Binance
   const mergedData = cachedData.map((coin: any) => {
     const coinSymbolUpper = coin.symbol.toUpperCase();
+    // console.log(coinSymbolUpper);
     const binanceInfo =
       Array.isArray(binanceCache) &&
       binanceCache.find((ticker: any) =>
-        ticker.symbol.endsWith(coinSymbolUpper)
+        ticker.symbol.endsWith(coinSymbolUpper + "USDT")
       );
-    // console.log(binanceInfo);
+
     return {
       id: coin.id,
       name: coin.name,
