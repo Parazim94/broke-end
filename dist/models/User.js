@@ -19,7 +19,7 @@ const userSchema = new mongoose_1.Schema({
     positions: { type: Object, default: {} }, //symbol,value
     favorites: [String],
     prefTheme: [String],
-    token: { type: String },
+    // token: { type: String },
 }, { timestamps: true });
 userSchema.methods.toJSON = function () {
     const obj = this.toObject();

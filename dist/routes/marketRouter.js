@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const manageOrders_1 = require("../controllers/manageOrders");
 const router = express_1.default.Router();
 // Globale Cache-Variablen für CoinGecko
 let cachedData = null;
@@ -47,22 +48,15 @@ router.get("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
         }
     }
     // Überprüfen, ob Binance-Daten älter als 1 Sekunde sind
-    // console.log(now - lastBinanceFetchTime);
     if (now - lastBinanceFetchTime > 10000) {
         try {
             const binanceResp = yield fetch("https://api.binance.us/api/v3/ticker/24hr");
             const binanceData = yield binanceResp.json();
-            console.log("huhu");
-            //orders check
-            // manageOrders(binanceData);
             if (Array.isArray(binanceData)) {
                 binanceCache = binanceData;
                 lastBinanceFetchTime = now;
-                // const currentprice = binanceData.map((coin) => {
-                //   return { coin: coin.symbol, value: coin.lastPrice };
-                // });
-                // res.send(currentprice);
-                console.log(binanceCache.find((ticker) => ticker.symbol.endsWith("BTCUSDT")));
+                //orders check
+                (0, manageOrders_1.manageOrders)(binanceData);
             }
             else {
                 console.error("Binance API gab kein Array zurück:", binanceData);
@@ -75,7 +69,6 @@ router.get("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
     // Mergen: Nur image und sparkline von CoinGecko, übrige Daten von Binance
     const mergedData = cachedData.map((coin) => {
         const coinSymbolUpper = coin.symbol.toUpperCase();
-        // console.log(coinSymbolUpper);
         const binanceInfo = Array.isArray(binanceCache) &&
             binanceCache.find((ticker) => ticker.symbol.endsWith(coinSymbolUpper + "USDT"));
         return {

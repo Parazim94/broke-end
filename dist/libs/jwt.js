@@ -11,7 +11,7 @@ const createJwt = (email) => {
         throw new Error("No JWT_SECRET or no email!");
     }
     const token = jsonwebtoken_1.default.sign({ email: email }, secret, {
-        expiresIn: "8h",
+        expiresIn: "4h",
     });
     console.log(token);
     return token;

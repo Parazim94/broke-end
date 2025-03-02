@@ -2,7 +2,7 @@ import express from "express";
 import { checkToken, CustomRequest } from "../middleware/checkToken";
 import { User } from "../models/User";
 import { Order } from "../models/Orders";
-import { findPackageJSON } from "module";
+
 const router = express.Router();
 
 router.post("/settings", checkToken, async (req: CustomRequest, res, next) => {

@@ -42,8 +42,8 @@ router.post("/login", (req, res, next) => __awaiter(void 0, void 0, void 0, func
         const user = yield User_1.User.findOne({ email: email });
         if (user && user.hashedPW && (yield (0, crypto_1.compare)(password, user.hashedPW))) {
             const jwt = (0, jwt_1.createJwt)(user.email);
-            user.token = jwt;
-            res.status(200).send(user);
+            const userObject = user.toObject();
+            res.status(200).send(Object.assign(Object.assign({}, userObject), { token: jwt }));
         }
         else {
             throw new Error("Login Fehler");

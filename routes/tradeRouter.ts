@@ -9,6 +9,7 @@ const router = express.Router();
 router.post("/", checkToken, async (req: CustomRequest, res, next) => {
   try {
     const { symbol, value } = req.body;
+    if (!symbol) throw new Error("No coin sumbmittet");
     const binanceSymbol = symbol.toUpperCase() + "USDT";
     const user = req.user;
 

@@ -20,6 +20,8 @@ const router = express_1.default.Router();
 router.post("/", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { symbol, value } = req.body;
+        if (!symbol)
+            throw new Error("No coin sumbmittet");
         const binanceSymbol = symbol.toUpperCase() + "USDT";
         const user = req.user;
         const UserAfterTrade = yield (0, trade_1.default)(symbol, binanceSymbol, value, user);

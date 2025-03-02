@@ -29,8 +29,8 @@ router.post("/login", async (req, res, next) => {
     const user = await User.findOne({ email: email });
     if (user && user.hashedPW && (await compare(password, user.hashedPW))) {
       const jwt = createJwt(user.email);
-      user.token = jwt;
-      res.status(200).send(user);
+      const userObject = user.toObject();
+      res.status(200).send({ ...userObject, token: jwt });
     } else {
       throw new Error("Login Fehler");
     }

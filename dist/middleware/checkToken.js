@@ -16,9 +16,10 @@ exports.checkToken = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const User_1 = require("../models/User");
 const DeletedToken_1 = require("../models/DeletedToken");
+const jwt_1 = require("../libs/jwt");
+const deleteOldToken_1 = require("../libs/deleteOldToken");
 const checkToken = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const token = req.body.token;
-    console.log(token);
     const deletedToken = yield DeletedToken_1.DeletedToken.findOne({ token: token });
     if (deletedToken === null || deletedToken === void 0 ? void 0 : deletedToken.token)
         return next(new Error("is logged out!"));
@@ -33,12 +34,22 @@ const checkToken = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     try {
         const payload = jsonwebtoken_1.default.verify(token, secret);
         if (typeof payload !== "string" && "email" in payload) {
-            req.user = yield User_1.User.findOne({ email: payload.email });
+            const user = yield User_1.User.findOne({ email: payload.email });
+            const userObject = user === null || user === void 0 ? void 0 : user.toObject();
+            if (!user)
+                throw new Error("user not found");
+            //token erneuern
+            const newToken = (0, jwt_1.createJwt)(user.email);
+            req.user = Object.assign(Object.assign({}, userObject), { token: newToken });
+            //altes token speichern
+            yield DeletedToken_1.DeletedToken.create({ token: token });
+            //abgelaufene alte token loeschen
+            (0, deleteOldToken_1.deleteOldToken)();
+            next();
         }
         else {
             return next(new Error("Invalid token payload"));
         }
-        next();
     }
     catch (err) {
         console.log("checkTokenError", err);
