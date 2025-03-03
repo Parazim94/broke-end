@@ -26,7 +26,11 @@ router.post("/settings", checkToken_1.checkToken, (req, res, next) => __awaiter(
         delete req.body.isVerified;
         yield User_1.User.updateOne({ email: req.user.email }, req.body);
         const user = yield User_1.User.findOne({ email: req.user.email });
-        res.send(user);
+        const token = req.user.token;
+        const userObject = user === null || user === void 0 ? void 0 : user.toObject();
+        const newUser = Object.assign(Object.assign({}, userObject), { token });
+        console.log(newUser);
+        res.send(newUser);
     }
     catch (error) {
         console.error("Fehler beim updaten!", error);
@@ -35,8 +39,7 @@ router.post("/settings", checkToken_1.checkToken, (req, res, next) => __awaiter(
 router.get("/", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const orders = yield Orders_1.Order.find({ user_id: req.user._id });
-        const userPlusOrdersObject = Object.assign(Object.assign({}, req.user), { orders });
-        res.send({ userPlusOrdersObject });
+        res.send(Object.assign(Object.assign({}, req.user), { orders }));
     }
     catch (error) {
         next(error);
