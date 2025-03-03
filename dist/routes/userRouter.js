@@ -35,7 +35,8 @@ router.post("/settings", checkToken_1.checkToken, (req, res, next) => __awaiter(
 router.get("/", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const orders = yield Orders_1.Order.find({ user_id: req.user._id });
-        res.send({ user: req.user, orders });
+        const userPlusOrdersObject = Object.assign(Object.assign({}, req.user), { orders });
+        res.send({ userPlusOrdersObject });
     }
     catch (error) {
         next(error);

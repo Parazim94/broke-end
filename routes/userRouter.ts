@@ -24,7 +24,8 @@ router.post("/settings", checkToken, async (req: CustomRequest, res, next) => {
 router.get("/", checkToken, async (req: CustomRequest, res, next) => {
   try {
     const orders = await Order.find({ user_id: req.user._id });
-    res.send({ user: req.user, orders });
+    const userPlusOrdersObject = { ...req.user, orders };
+    res.send({ userPlusOrdersObject });
   } catch (error) {
     next(error);
   }
