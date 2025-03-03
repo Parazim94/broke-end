@@ -26,7 +26,7 @@ router.post("/settings", checkToken, async (req: CustomRequest, res, next) => {
   }
 });
 
-router.get("/", checkToken, async (req: CustomRequest, res, next) => {
+router.post("/", checkToken, async (req: CustomRequest, res, next) => {
   try {
     const orders = await Order.find({ user_id: req.user._id });
     res.send({ ...req.user, orders });

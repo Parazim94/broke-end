@@ -36,7 +36,7 @@ router.post("/settings", checkToken_1.checkToken, (req, res, next) => __awaiter(
         console.error("Fehler beim updaten!", error);
     }
 }));
-router.get("/", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const orders = yield Orders_1.Order.find({ user_id: req.user._id });
         res.send(Object.assign(Object.assign({}, req.user), { orders }));
