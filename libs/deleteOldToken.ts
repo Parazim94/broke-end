@@ -14,7 +14,7 @@ export const deleteOldToken = async () => {
     try {
       const payload = jwt.verify(oldToken, secret);
       if (typeof payload !== "string" && "email" in payload) {
-        console.log("nicht loeschen bitte");
+        // console.log("nicht loeschen bitte");
       } else {
         console.log(`loeschen : ${token.token}`);
       }

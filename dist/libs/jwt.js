@@ -13,7 +13,6 @@ const createJwt = (email) => {
     const token = jsonwebtoken_1.default.sign({ email: email }, secret, {
         expiresIn: "4h",
     });
-    console.log(token);
     return token;
 };
 exports.createJwt = createJwt;

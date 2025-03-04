@@ -2,8 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { User } from "../models/User";
 import { DeletedToken } from "../models/DeletedToken";
-import { createJwt } from "../libs/jwt";
-import { deleteOldToken } from "../libs/deleteOldToken";
+
 export interface CustomRequest extends Request {
   user?: any;
 }
@@ -28,18 +27,8 @@ export const checkToken = async (
     const payload = jwt.verify(token, secret);
     if (typeof payload !== "string" && "email" in payload) {
       const user = await User.findOne({ email: payload.email });
-      const userObject = user?.toObject();
+      req.user = user?.toObject();
       if (!user) throw new Error("user not found");
-
-      //token erneuern
-      const newToken = createJwt(user.email);
-      req.user = { ...userObject, token: newToken };
-
-      //altes token speichern
-      await DeletedToken.create({ token: token });
-
-      //abgelaufene alte token loeschen
-      deleteOldToken();
 
       next();
     } else {

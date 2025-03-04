@@ -29,7 +29,6 @@ router.post("/settings", checkToken_1.checkToken, (req, res, next) => __awaiter(
         const token = req.user.token;
         const userObject = user === null || user === void 0 ? void 0 : user.toObject();
         const newUser = Object.assign(Object.assign({}, userObject), { token });
-        console.log(newUser);
         res.send(newUser);
     }
     catch (error) {

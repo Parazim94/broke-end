@@ -26,7 +26,7 @@ const deleteOldToken = () => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const payload = jsonwebtoken_1.default.verify(oldToken, secret);
             if (typeof payload !== "string" && "email" in payload) {
-                console.log("nicht loeschen bitte");
+                // console.log("nicht loeschen bitte");
             }
             else {
                 console.log(`loeschen : ${token.token}`);

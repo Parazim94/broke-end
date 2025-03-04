@@ -19,7 +19,6 @@ router.post("/settings", checkToken, async (req: CustomRequest, res, next) => {
     const userObject = user?.toObject();
     const newUser = { ...userObject, token };
 
-    console.log(newUser);
     res.send(newUser);
   } catch (error) {
     console.error("Fehler beim updaten!", error);

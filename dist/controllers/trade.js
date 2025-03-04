@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const User_1 = require("../models/User");
-const jwt_1 = require("../libs/jwt");
 const trade = (symbol, binanceSymbol, value, user) => __awaiter(void 0, void 0, void 0, function* () {
     if (binanceSymbol) {
         const response = yield fetch(`https://api.binance.us/api/v3/ticker/price?symbol=${binanceSymbol}`);
@@ -43,7 +42,7 @@ const trade = (symbol, binanceSymbol, value, user) => __awaiter(void 0, void 0, 
             delete user.positions[symbol];
         yield User_1.User.updateOne({ _id: user._id }, user);
         //token erneuern
-        user.token = (0, jwt_1.createJwt)(user.email);
+        // user.token = createJwt(user.email);
         return user;
         // res.send(user);
     }

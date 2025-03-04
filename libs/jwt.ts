@@ -8,6 +8,6 @@ export const createJwt = (email: string) => {
   const token = jsonwebtoken.sign({ email: email }, secret, {
     expiresIn: "4h",
   });
-  console.log(token);
+
   return token;
 };

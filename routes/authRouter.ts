@@ -50,8 +50,4 @@ router.get("/logout", async (req, res, next) => {
   res.send(message);
 });
 
-router.get("/test", checkToken, (req, res, next) => {
-  res.send("test");
-});
-
 export default router;

@@ -17,7 +17,6 @@ const User_1 = require("../models/User");
 const DeletedToken_1 = require("../models/DeletedToken");
 const crypto_1 = require("../libs/crypto");
 const jwt_1 = require("../libs/jwt");
-const checkToken_1 = require("../middleware/checkToken");
 const router = express_1.default.Router();
 router.post("/register", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -64,7 +63,4 @@ router.get("/logout", (req, res, next) => __awaiter(void 0, void 0, void 0, func
         message = "No user to log out!";
     res.send(message);
 }));
-router.get("/test", checkToken_1.checkToken, (req, res, next) => {
-    res.send("test");
-});
 exports.default = router;

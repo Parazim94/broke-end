@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const checkToken_1 = require("../middleware/checkToken");
+const newToken_1 = __importDefault(require("../controllers/newToken"));
 const Orders_1 = require("../models/Orders");
 const trade_1 = __importDefault(require("../controllers/trade"));
 const router = express_1.default.Router();
@@ -25,7 +26,10 @@ router.post("/", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, 
         const binanceSymbol = symbol.toUpperCase() + "USDT";
         const user = req.user;
         const UserAfterTrade = yield (0, trade_1.default)(symbol, binanceSymbol, value, user);
-        res.send(UserAfterTrade);
+        //neues token und altes speichern
+        const token = yield (0, newToken_1.default)(req.body.token, user.email);
+        const newUser = Object.assign(Object.assign({}, UserAfterTrade), { token });
+        res.send(newUser);
     }
     catch (error) {
         next(error);
@@ -42,7 +46,10 @@ router.post("/order", checkToken_1.checkToken, (req, res, next) => __awaiter(voi
             threshold,
             user_id: req.user._id,
         });
-        res.send(req.user);
+        //neues token und altes speichern
+        const token = yield (0, newToken_1.default)(req.body.token, req.user.email);
+        const newUser = Object.assign(Object.assign({}, req.user), { token });
+        res.send(newUser);
     }
     catch (error) {
         next(error);

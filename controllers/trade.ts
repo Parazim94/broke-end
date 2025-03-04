@@ -40,7 +40,7 @@ const trade = async (
     if (user.positions[symbol] === 0) delete user.positions[symbol];
     await User.updateOne({ _id: user._id }, user);
     //token erneuern
-    user.token = createJwt(user.email);
+    // user.token = createJwt(user.email);
     return user;
     // res.send(user);
   }

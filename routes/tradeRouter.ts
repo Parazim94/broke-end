@@ -1,7 +1,7 @@
 import express from "express";
 import { checkToken, CustomRequest } from "../middleware/checkToken";
 import { User } from "../models/User";
-
+import newToken from "../controllers/newToken";
 import { Order } from "../models/Orders";
 import trade from "../controllers/trade";
 const router = express.Router();
@@ -12,10 +12,13 @@ router.post("/", checkToken, async (req: CustomRequest, res, next) => {
     if (!symbol) throw new Error("No coin sumbmittet");
     const binanceSymbol = symbol.toUpperCase() + "USDT";
     const user = req.user;
-
     const UserAfterTrade = await trade(symbol, binanceSymbol, value, user);
 
-    res.send(UserAfterTrade);
+    //neues token und altes speichern
+    const token = await newToken(req.body.token, user.email);
+
+    const newUser = { ...UserAfterTrade, token };
+    res.send(newUser);
   } catch (error) {
     next(error);
   }
@@ -33,7 +36,11 @@ router.post("/order", checkToken, async (req: CustomRequest, res, next) => {
       threshold,
       user_id: req.user._id,
     });
-    res.send(req.user);
+    //neues token und altes speichern
+    const token = await newToken(req.body.token, req.user.email);
+
+    const newUser = { ...req.user, token };
+    res.send(newUser);
   } catch (error) {
     next(error);
   }
