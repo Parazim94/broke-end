@@ -2,6 +2,7 @@ import express from "express";
 import { checkToken, CustomRequest } from "../middleware/checkToken";
 import { User } from "../models/User";
 import { Order } from "../models/Orders";
+import newToken from "../controllers/newToken";
 
 const router = express.Router();
 
@@ -28,7 +29,12 @@ router.post("/settings", checkToken, async (req: CustomRequest, res, next) => {
 router.post("/", checkToken, async (req: CustomRequest, res, next) => {
   try {
     const orders = await Order.find({ user_id: req.user._id });
-    res.send({ ...req.user, orders });
+
+    //neues token und altes speichern
+    const token = await newToken(req.body.token, req.user.email);
+
+    const newUser = { ...req.user, token, orders };
+    res.send(newUser);
   } catch (error) {
     next(error);
   }

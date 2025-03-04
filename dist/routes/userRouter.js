@@ -16,6 +16,7 @@ const express_1 = __importDefault(require("express"));
 const checkToken_1 = require("../middleware/checkToken");
 const User_1 = require("../models/User");
 const Orders_1 = require("../models/Orders");
+const newToken_1 = __importDefault(require("../controllers/newToken"));
 const router = express_1.default.Router();
 router.post("/settings", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -38,7 +39,10 @@ router.post("/settings", checkToken_1.checkToken, (req, res, next) => __awaiter(
 router.post("/", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const orders = yield Orders_1.Order.find({ user_id: req.user._id });
-        res.send(Object.assign(Object.assign({}, req.user), { orders }));
+        //neues token und altes speichern
+        const token = yield (0, newToken_1.default)(req.body.token, req.user.email);
+        const newUser = Object.assign(Object.assign({}, req.user), { token, orders });
+        res.send(newUser);
     }
     catch (error) {
         next(error);
