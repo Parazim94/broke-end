@@ -27,9 +27,11 @@ router.post("/settings", checkToken_1.checkToken, (req, res, next) => __awaiter(
         delete req.body.isVerified;
         yield User_1.User.updateOne({ email: req.user.email }, req.body);
         const user = yield User_1.User.findOne({ email: req.user.email });
-        const token = req.user.token;
         const userObject = user === null || user === void 0 ? void 0 : user.toObject();
+        //neues token und altes speichern
+        const token = yield (0, newToken_1.default)(req.body.token, req.user.email);
         const newUser = Object.assign(Object.assign({}, userObject), { token });
+        res.send(newUser);
         res.send(newUser);
     }
     catch (error) {

@@ -16,9 +16,15 @@ router.post("/settings", checkToken, async (req: CustomRequest, res, next) => {
 
     await User.updateOne({ email: req.user.email }, req.body);
     const user = await User.findOne({ email: req.user.email });
-    const token = req.user.token;
+
     const userObject = user?.toObject();
+
+    //neues token und altes speichern
+    const token = await newToken(req.body.token, req.user.email);
+
     const newUser = { ...userObject, token };
+
+    res.send(newUser);
 
     res.send(newUser);
   } catch (error) {
