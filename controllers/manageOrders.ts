@@ -1,6 +1,6 @@
 import { User } from "../models/User";
 import { Order } from "../models/Orders";
-
+import { storeTrade } from "../controllers/trade";
 interface BinanceCache {
   [key: string]: any; // This represents the binance cache object
 }
@@ -29,6 +29,13 @@ export const manageOrders = async (
             user.cash -= orderPrice;
             const newUser = await User.updateOne({ _id: user._id }, user);
             await Order.deleteOne({ _id: order._id });
+            storeTrade(
+              coin.symbol.substring(0, coin.symbol.length - 4).toLowerCase(),
+              coin.lastPrice,
+              order.amount,
+              true,
+              user.email
+            );
           }
         }
       }
@@ -44,6 +51,13 @@ export const manageOrders = async (
             user.cash -= orderPrice;
             const newUser = await User.updateOne({ _id: user._id }, user);
             await Order.deleteOne({ _id: order._id });
+            storeTrade(
+              coin.symbol,
+              coin.lastPrice,
+              order.amount,
+              true,
+              user.email
+            );
           }
         }
       }

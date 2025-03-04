@@ -2,6 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const mongoose_1 = require("mongoose");
+const tradeHistorySchema = new mongoose_1.Schema({
+    symbol: { type: String, required: true },
+    price: { type: Number, required: true },
+    amount: { type: Number, required: true },
+    order: { type: Boolean, default: false },
+}, { timestamps: true });
 const historySchema = new mongoose_1.Schema({
     total: Number,
     date: Date,
@@ -19,7 +25,7 @@ const userSchema = new mongoose_1.Schema({
     positions: { type: Object, default: {} }, //symbol,value
     favorites: [String],
     prefTheme: [String],
-    // token: { type: String },
+    tradeHistory: [tradeHistorySchema],
 }, { timestamps: true });
 userSchema.methods.toJSON = function () {
     const obj = this.toObject();

@@ -1,5 +1,5 @@
 import { User } from "../models/User";
-import { createJwt } from "../libs/jwt";
+
 const trade = async (
   symbol: string,
   binanceSymbol: string,
@@ -39,10 +39,22 @@ const trade = async (
     }
     if (user.positions[symbol] === 0) delete user.positions[symbol];
     await User.updateOne({ _id: user._id }, user);
-    //token erneuern
-    // user.token = createJwt(user.email);
+    storeTrade(symbol, price, value, false, user.email);
     return user;
-    // res.send(user);
   }
 };
 export default trade;
+
+export async function storeTrade(
+  symbol: string,
+  price: number,
+  amount: number,
+  order: boolean,
+  email: string
+) {
+  const user = await User.findOne({ email: email });
+  const trades = user?.tradeHistory;
+  trades?.push({ symbol, price, amount, order });
+  // await User.updateOne({ email: email }, { tradeHistory: trades });
+  await user?.updateOne({ tradeHistory: trades });
+}

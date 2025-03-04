@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.storeTrade = storeTrade;
 const User_1 = require("../models/User");
 const trade = (symbol, binanceSymbol, value, user) => __awaiter(void 0, void 0, void 0, function* () {
     if (binanceSymbol) {
@@ -41,10 +42,17 @@ const trade = (symbol, binanceSymbol, value, user) => __awaiter(void 0, void 0, 
         if (user.positions[symbol] === 0)
             delete user.positions[symbol];
         yield User_1.User.updateOne({ _id: user._id }, user);
-        //token erneuern
-        // user.token = createJwt(user.email);
+        storeTrade(symbol, price, value, false, user.email);
         return user;
-        // res.send(user);
     }
 });
 exports.default = trade;
+function storeTrade(symbol, price, amount, order, email) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const user = yield User_1.User.findOne({ email: email });
+        const trades = user === null || user === void 0 ? void 0 : user.tradeHistory;
+        trades === null || trades === void 0 ? void 0 : trades.push({ symbol, price, amount, order });
+        // await User.updateOne({ email: email }, { tradeHistory: trades });
+        yield (user === null || user === void 0 ? void 0 : user.updateOne({ tradeHistory: trades }));
+    });
+}

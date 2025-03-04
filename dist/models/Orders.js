@@ -7,5 +7,5 @@ const ordersSchema = new mongoose_1.Schema({
     amount: { type: Number, required: true },
     threshold: { type: Number, required: true },
     user_id: { type: String, required: true },
-});
+}, { timestamps: true });
 exports.Order = (0, mongoose_1.model)("Order", ordersSchema);

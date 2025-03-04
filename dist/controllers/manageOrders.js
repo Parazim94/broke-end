@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.manageOrders = void 0;
 const User_1 = require("../models/User");
 const Orders_1 = require("../models/Orders");
+const trade_1 = require("../controllers/trade");
 const manageOrders = (binanceCache) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const orders = yield Orders_1.Order.find();
@@ -30,6 +31,7 @@ const manageOrders = (binanceCache) => __awaiter(void 0, void 0, void 0, functio
                         user.cash -= orderPrice;
                         const newUser = yield User_1.User.updateOne({ _id: user._id }, user);
                         yield Orders_1.Order.deleteOne({ _id: order._id });
+                        (0, trade_1.storeTrade)(coin.symbol.substring(0, coin.symbol.length - 4).toLowerCase(), coin.lastPrice, order.amount, true, user.email);
                     }
                 }
             }
@@ -45,6 +47,7 @@ const manageOrders = (binanceCache) => __awaiter(void 0, void 0, void 0, functio
                         user.cash -= orderPrice;
                         const newUser = yield User_1.User.updateOne({ _id: user._id }, user);
                         yield Orders_1.Order.deleteOne({ _id: order._id });
+                        (0, trade_1.storeTrade)(coin.symbol, coin.lastPrice, order.amount, true, user.email);
                     }
                 }
             }
