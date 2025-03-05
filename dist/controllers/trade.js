@@ -52,11 +52,6 @@ function storeTrade(symbol, price, amount, order, email) {
         const user = yield User_1.User.findOne({ email: email });
         const tradeHistory = user === null || user === void 0 ? void 0 : user.tradeHistory;
         tradeHistory === null || tradeHistory === void 0 ? void 0 : tradeHistory.push({ symbol, price, amount, order, date: Date.now() });
-        if (tradeHistory) {
-            while (tradeHistory.length > 10) {
-                tradeHistory.shift();
-            }
-        }
         yield User_1.User.updateOne({ email: email }, {
             tradeHistory: tradeHistory,
         });

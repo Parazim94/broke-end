@@ -55,4 +55,32 @@ router.post("/order", checkToken_1.checkToken, (req, res, next) => __awaiter(voi
         next(error);
     }
 }));
+router.post("/deleteorder", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = req.body.order._id;
+        if (!id)
+            throw new Error("No order ID provided");
+        yield Orders_1.Order.deleteOne({ _id: id });
+        const token = yield (0, newToken_1.default)(req.body.token, req.user.email);
+        const newUser = Object.assign(Object.assign({}, req.user), { token });
+        res.send(newUser);
+    }
+    catch (error) {
+        next(error);
+    }
+}));
+router.post("/editorder", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = req.body.order._id;
+        if (!id)
+            throw new Error("No order ID provided");
+        yield Orders_1.Order.updateOne({ _id: id }, req.body.order);
+        const token = yield (0, newToken_1.default)(req.body.token, req.user.email);
+        const newUser = Object.assign(Object.assign({}, req.user), { token });
+        res.send(newUser);
+    }
+    catch (error) {
+        next(error);
+    }
+}));
 exports.default = router;

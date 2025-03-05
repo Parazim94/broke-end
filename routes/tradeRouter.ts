@@ -45,5 +45,40 @@ router.post("/order", checkToken, async (req: CustomRequest, res, next) => {
     next(error);
   }
 });
+router.post(
+  "/deleteorder",
+  checkToken,
+  async (req: CustomRequest, res, next) => {
+    try {
+      const id = req.body.order._id;
+      if (!id) throw new Error("No order ID provided");
+
+      await Order.deleteOne({ _id: id });
+      const token = await newToken(req.body.token, req.user.email);
+
+      const newUser = { ...req.user, token };
+      const orders = await Order.find({ user_id: req.user._id });
+      res.send({ ...newUser, orders });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+router.post("/editorder", checkToken, async (req: CustomRequest, res, next) => {
+  try {
+    const id = req.body.order._id;
+    if (!id) throw new Error("No order ID provided");
+
+    await Order.updateOne({ _id: id }, req.body.order);
+    const token = await newToken(req.body.token, req.user.email);
+    const newUser = { ...req.user, token };
+
+    const orders = await Order.find({ user_id: req.user._id });
+
+    res.send({ ...newUser, orders });
+  } catch (error) {
+    next(error);
+  }
+});
 
 export default router;
