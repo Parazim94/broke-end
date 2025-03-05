@@ -50,9 +50,15 @@ exports.default = trade;
 function storeTrade(symbol, price, amount, order, email) {
     return __awaiter(this, void 0, void 0, function* () {
         const user = yield User_1.User.findOne({ email: email });
-        const trades = user === null || user === void 0 ? void 0 : user.tradeHistory;
-        trades === null || trades === void 0 ? void 0 : trades.push({ symbol, price, amount, order });
-        // await User.updateOne({ email: email }, { tradeHistory: trades });
-        yield (user === null || user === void 0 ? void 0 : user.updateOne({ tradeHistory: trades }));
+        const tradeHistory = user === null || user === void 0 ? void 0 : user.tradeHistory;
+        tradeHistory === null || tradeHistory === void 0 ? void 0 : tradeHistory.push({ symbol, price, amount, order, date: Date.now() });
+        if (tradeHistory) {
+            while (tradeHistory.length > 10) {
+                tradeHistory.shift();
+            }
+        }
+        yield User_1.User.updateOne({ email: email }, {
+            tradeHistory: tradeHistory,
+        });
     });
 }

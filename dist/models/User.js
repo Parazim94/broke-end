@@ -7,7 +7,8 @@ const tradeHistorySchema = new mongoose_1.Schema({
     price: { type: Number, required: true },
     amount: { type: Number, required: true },
     order: { type: Boolean, default: false },
-}, { timestamps: true });
+    date: { type: Date, required: true },
+});
 const historySchema = new mongoose_1.Schema({
     total: Number,
     date: Date,
