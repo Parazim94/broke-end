@@ -1,14 +1,14 @@
 import express from "express";
 import cors from "cors";
-// import cookieParser from "cookie-parser";
+
 import dotenv from "dotenv";
 import { connectDB } from "./libs/database";
 import authRoute from "./routes/authRouter";
 import marketRoute from "./routes/marketRouter";
 import tradeRoute from "./routes/tradeRouter";
 import userRoute from "./routes/userRouter";
-import { runAtMidnight } from "./libs/dailyStore";
-import { deleteOldToken } from "./libs/deleteOldToken";
+import { dailyStore, runAtMidnight } from "./libs/dailyStore";
+
 interface Error {
   message: string;
 }
@@ -20,8 +20,7 @@ dotenv.config();
 connectDB();
 const app = express();
 
-// dailyStore();
-// deleteOldToken();
+dailyStore();
 
 app.use(cors());
 

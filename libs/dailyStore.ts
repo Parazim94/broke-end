@@ -1,22 +1,20 @@
 import { User } from "../models/User";
 
-// export function dailyStore(): void {
-//   const now = new Date();
-//   console.log(now);
+export function dailyStore(): void {
+  const now = new Date();
 
-//   const midnight = new Date(now);
+  const midnight = new Date(now);
 
-//   midnight.setHours(24, 0, 0, 0); // Set to next midnight
+  midnight.setHours(24, 0, 0, 0); // Set to next midnight
 
-//   let timeUntilMidnight: number = midnight.getTime() - now.getTime(); // Time in milliseconds until midnight
+  let timeUntilMidnight: number = midnight.getTime() - now.getTime(); // Time in milliseconds until midnight
 
-//   timeUntilMidnight = 60000;
-//   // Set a timeout to run the task at midnight
-//   setTimeout(() => {
-//     runAtMidnight(); // Execute the task
-//     dailyStore(); // Schedule the task again for the next day
-//   }, timeUntilMidnight);
-// }
+  // Set a timeout to run the task at midnight
+  setTimeout(() => {
+    runAtMidnight(); // Execute the task
+    dailyStore(); // Schedule the task again for the next day
+  }, timeUntilMidnight);
+}
 
 export async function runAtMidnight(): Promise<void> {
   const users = await User.find();
