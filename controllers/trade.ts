@@ -52,9 +52,12 @@ export async function storeTrade(
   order: boolean,
   email: string
 ) {
-  const user = await User.findOne({ email: email });
-  const trades = user?.tradeHistory;
-  trades?.push({ symbol, price, amount, order });
-  // await User.updateOne({ email: email }, { tradeHistory: trades });
-  await user?.updateOne({ tradeHistory: trades });
+  await User.updateOne(
+    { email: email },
+    {
+      $push: {
+        tradeHistory: { symbol, price, amount, order },
+      },
+    }
+  );
 }
