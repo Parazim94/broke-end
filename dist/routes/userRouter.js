@@ -25,6 +25,7 @@ router.post("/settings", checkToken_1.checkToken, (req, res, next) => __awaiter(
         delete req.body.positions;
         delete req.body.history;
         delete req.body.isVerified;
+        delete req.body.tradeHistory;
         yield User_1.User.updateOne({ email: req.user.email }, req.body);
         const user = yield User_1.User.findOne({ email: req.user.email });
         const userObject = user === null || user === void 0 ? void 0 : user.toObject();

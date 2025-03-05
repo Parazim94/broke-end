@@ -16,8 +16,8 @@ router.post("/", checkToken, async (req: CustomRequest, res, next) => {
 
     //neues token und altes speichern
     const token = await newToken(req.body.token, user.email);
-
-    const newUser = { ...UserAfterTrade, token };
+    const orders = await Order.find({ user_id: req.user._id });
+    const newUser = { ...UserAfterTrade, token, orders };
     res.send(newUser);
   } catch (error) {
     next(error);
@@ -38,8 +38,8 @@ router.post("/order", checkToken, async (req: CustomRequest, res, next) => {
     });
     //neues token und altes speichern
     const token = await newToken(req.body.token, req.user.email);
-
-    const newUser = { ...req.user, token };
+    const orders = await Order.find({ user_id: req.user._id });
+    const newUser = { ...req.user, token, orders };
     res.send(newUser);
   } catch (error) {
     next(error);

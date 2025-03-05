@@ -35,7 +35,7 @@ userSchema.methods.toJSON = function (this: any) {
   delete obj.hashedPW;
   delete obj.__v;
 
-  obj.tradeHistory = obj.tradeHistory.slice(-5);
+  obj.tradeHistory = obj.tradeHistory.slice(-10);
   return obj;
 };
 

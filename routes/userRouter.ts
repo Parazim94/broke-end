@@ -13,7 +13,7 @@ router.post("/settings", checkToken, async (req: CustomRequest, res, next) => {
     delete req.body.positions;
     delete req.body.history;
     delete req.body.isVerified;
-
+    delete req.body.tradeHistory;
     await User.updateOne({ email: req.user.email }, req.body);
     const user = await User.findOne({ email: req.user.email });
 

@@ -28,7 +28,8 @@ router.post("/", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, 
         const UserAfterTrade = yield (0, trade_1.default)(symbol, binanceSymbol, value, user);
         //neues token und altes speichern
         const token = yield (0, newToken_1.default)(req.body.token, user.email);
-        const newUser = Object.assign(Object.assign({}, UserAfterTrade), { token });
+        const orders = yield Orders_1.Order.find({ user_id: req.user._id });
+        const newUser = Object.assign(Object.assign({}, UserAfterTrade), { token, orders });
         res.send(newUser);
     }
     catch (error) {
@@ -48,7 +49,8 @@ router.post("/order", checkToken_1.checkToken, (req, res, next) => __awaiter(voi
         });
         //neues token und altes speichern
         const token = yield (0, newToken_1.default)(req.body.token, req.user.email);
-        const newUser = Object.assign(Object.assign({}, req.user), { token });
+        const orders = yield Orders_1.Order.find({ user_id: req.user._id });
+        const newUser = Object.assign(Object.assign({}, req.user), { token, orders });
         res.send(newUser);
     }
     catch (error) {
@@ -63,7 +65,8 @@ router.post("/deleteorder", checkToken_1.checkToken, (req, res, next) => __await
         yield Orders_1.Order.deleteOne({ _id: id });
         const token = yield (0, newToken_1.default)(req.body.token, req.user.email);
         const newUser = Object.assign(Object.assign({}, req.user), { token });
-        res.send(newUser);
+        const orders = yield Orders_1.Order.find({ user_id: req.user._id });
+        res.send(Object.assign(Object.assign({}, newUser), { orders }));
     }
     catch (error) {
         next(error);
@@ -77,7 +80,8 @@ router.post("/editorder", checkToken_1.checkToken, (req, res, next) => __awaiter
         yield Orders_1.Order.updateOne({ _id: id }, req.body.order);
         const token = yield (0, newToken_1.default)(req.body.token, req.user.email);
         const newUser = Object.assign(Object.assign({}, req.user), { token });
-        res.send(newUser);
+        const orders = yield Orders_1.Order.find({ user_id: req.user._id });
+        res.send(Object.assign(Object.assign({}, newUser), { orders }));
     }
     catch (error) {
         next(error);
