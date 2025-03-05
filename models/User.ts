@@ -1,13 +1,11 @@
 import { Schema, model } from "mongoose";
-const tradeHistorySchema = new Schema(
-  {
-    symbol: { type: String, required: true },
-    price: { type: Number, required: true },
-    amount: { type: Number, required: true },
-    order: { type: Boolean, default: false },
-  },
-  { timestamps: true }
-);
+const tradeHistorySchema = new Schema({
+  symbol: { type: String, required: true },
+  price: { type: Number, required: true },
+  amount: { type: Number, required: true },
+  order: { type: Boolean, default: false },
+  date: { type: Date, required: true },
+});
 const historySchema = new Schema(
   {
     total: Number,

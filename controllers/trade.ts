@@ -56,7 +56,7 @@ export async function storeTrade(
     { email: email },
     {
       $push: {
-        tradeHistory: { symbol, price, amount, order },
+        tradeHistory: { symbol, price, amount, order, date: Date.now() },
       },
     }
   );
