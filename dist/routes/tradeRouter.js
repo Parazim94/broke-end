@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const checkToken_1 = require("../middleware/checkToken");
+const User_1 = require("../models/User");
 const newToken_1 = __importDefault(require("../controllers/newToken"));
 const Orders_1 = require("../models/Orders");
 const trade_1 = __importDefault(require("../controllers/trade"));
@@ -25,11 +26,16 @@ router.post("/", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, 
             throw new Error("No coin sumbmittet");
         const binanceSymbol = symbol.toUpperCase() + "USDT";
         const user = req.user;
-        const UserAfterTrade = yield (0, trade_1.default)(symbol, binanceSymbol, value, user);
+        yield (0, trade_1.default)(symbol, binanceSymbol, value, user);
+        // Fetch updated user data
+        const updatedUser = yield User_1.User.findById(req.user._id);
+        if (!updatedUser)
+            throw new Error("User not found after trade");
         //neues token und altes speichern
         const token = yield (0, newToken_1.default)(req.body.token, user.email);
         const orders = yield Orders_1.Order.find({ user_id: req.user._id });
-        const newUser = Object.assign(Object.assign({}, UserAfterTrade), { token, orders });
+        const newUser = Object.assign(Object.assign({}, updatedUser.toObject()), { token, orders });
+        console.log(newUser);
         res.send(newUser);
     }
     catch (error) {

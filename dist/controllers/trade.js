@@ -41,9 +41,9 @@ const trade = (symbol, binanceSymbol, value, user) => __awaiter(void 0, void 0, 
         }
         if (user.positions[symbol] === 0)
             delete user.positions[symbol];
-        yield User_1.User.updateOne({ _id: user._id }, user);
-        storeTrade(symbol, price, value, false, user.email);
-        return user;
+        const newUser = yield User_1.User.updateOne({ _id: user._id }, user);
+        yield storeTrade(symbol, price, value, false, user.email);
+        return newUser;
     }
 });
 exports.default = trade;

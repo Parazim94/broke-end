@@ -38,9 +38,10 @@ const trade = async (
       user.positions[symbol] += value;
     }
     if (user.positions[symbol] === 0) delete user.positions[symbol];
-    await User.updateOne({ _id: user._id }, user);
-    storeTrade(symbol, price, value, false, user.email);
-    return user;
+    const newUser = await User.updateOne({ _id: user._id }, user);
+
+    await storeTrade(symbol, price, value, false, user.email);
+    return newUser;
   }
 };
 export default trade;
