@@ -27,7 +27,7 @@ export const checkToken = async (
     const payload = jwt.verify(token, secret);
     if (typeof payload !== "string" && "email" in payload) {
       const user = await User.findOne({ email: payload.email });
-      req.user = user?.toObject();
+      req.user = user?.toJSON();
       if (!user) throw new Error("user not found");
 
       next();

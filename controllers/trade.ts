@@ -55,11 +55,6 @@ export async function storeTrade(
   const user = await User.findOne({ email: email });
   const tradeHistory = user?.tradeHistory;
   tradeHistory?.push({ symbol, price, amount, order, date: Date.now() });
-  if (tradeHistory) {
-    while (tradeHistory.length > 10) {
-      tradeHistory.shift();
-    }
-  }
 
   await User.updateOne(
     { email: email },
