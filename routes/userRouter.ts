@@ -40,7 +40,8 @@ router.post("/", checkToken, async (req: CustomRequest, res, next) => {
     const token = await newToken(req.body.token, req.user.email);
 
     const newUser = { ...req.user, token, orders };
-    res.send(newUser);
+
+    res.json(newUser);
   } catch (error) {
     next(error);
   }

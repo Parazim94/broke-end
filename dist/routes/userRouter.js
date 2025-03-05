@@ -44,7 +44,8 @@ router.post("/", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, 
         //neues token und altes speichern
         const token = yield (0, newToken_1.default)(req.body.token, req.user.email);
         const newUser = Object.assign(Object.assign({}, req.user), { token, orders });
-        res.send(newUser);
+        const newUserJson = newUser === null || newUser === void 0 ? void 0 : newUser.toJSON();
+        res.json(newUserJson);
     }
     catch (error) {
         next(error);

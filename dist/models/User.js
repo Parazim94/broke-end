@@ -32,6 +32,9 @@ userSchema.methods.toJSON = function () {
     const obj = this.toObject();
     delete obj.hashedPW;
     delete obj.__v;
+    while (obj.tradeHistory.length > 5) {
+        obj.tradeHistory.shift();
+    }
     return obj;
 };
 exports.User = (0, mongoose_1.model)("User", userSchema);

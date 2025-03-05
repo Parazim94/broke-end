@@ -30,10 +30,14 @@ const userSchema = new Schema(
   },
   { timestamps: true }
 );
-userSchema.methods.toJSON = function () {
+userSchema.methods.toJSON = function (this: any) {
   const obj = this.toObject();
   delete obj.hashedPW;
   delete obj.__v;
+
+  while (obj.tradeHistory.length > 5) {
+    obj.tradeHistory.shift();
+  }
   return obj;
 };
 
