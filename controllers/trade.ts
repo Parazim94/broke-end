@@ -19,9 +19,11 @@ const trade = async (
         `preis stimmt nicht: ${price}   Bsymbol${binanceSymbol} symbol ${symbol} data:${data.symbol}, ${data.price}`
       );
     if (value === 0) throw new Error("sehr witzig...");
+    if (!user.positions) user.positions = {};
     if (value > 0) {
       if (value * price > user.cash) throw new Error("not enough cash!");
       user.cash -= value * price;
+
       if (!user.positions[symbol]) {
         user.positions[symbol] = 0;
       }
