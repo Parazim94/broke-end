@@ -17,6 +17,7 @@ const historySchema = new mongoose_1.Schema({
 const userSchema = new mongoose_1.Schema({
     userName: String,
     email: { type: String, required: true, unique: true },
+    oldEmail: { type: String },
     password: { type: String, require: true },
     age: { type: Number, required: true },
     isVerified: { type: Boolean, default: false },

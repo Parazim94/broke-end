@@ -4,6 +4,7 @@ import { checkEmail } from "../middleware/checkEmail";
 import { User } from "../models/User";
 import { Order } from "../models/Orders";
 import newToken from "../controllers/newToken";
+import sendVerificationEmail from "../libs/sendVerificationEmail";
 
 const router = express.Router();
 
@@ -47,4 +48,35 @@ router.post("/", checkToken, async (req: CustomRequest, res, next) => {
     next(error);
   }
 });
+
+router.post(
+  "/change_email",
+  checkToken,
+  async (req: CustomRequest, res, next) => {
+    try {
+      const newEmail = req.body.newEmail;
+      if (!newEmail) {
+        throw new Error("no new email provided.");
+      }
+      await User.updateOne(
+        { email: req.user.email },
+        { email: newEmail, oldEmail: req.user.email, isVerified: false }
+      );
+      const updatedUser = await User.findOne({ email: newEmail });
+      const userObject = updatedUser?.toJSON();
+
+      sendVerificationEmail(newEmail);
+
+      const orders = await Order.find({ user_id: req.user._id });
+
+      //neues token und altes speichern
+      const token = await newToken(req.body.token, newEmail);
+
+      const newUser = { ...userObject, token, orders };
+      res.json(newUser);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 export default router;

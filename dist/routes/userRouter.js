@@ -17,6 +17,7 @@ const checkToken_1 = require("../middleware/checkToken");
 const User_1 = require("../models/User");
 const Orders_1 = require("../models/Orders");
 const newToken_1 = __importDefault(require("../controllers/newToken"));
+const sendVerificationEmail_1 = __importDefault(require("../libs/sendVerificationEmail"));
 const router = express_1.default.Router();
 router.post("/settings", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -45,6 +46,26 @@ router.post("/", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, 
         //neues token und altes speichern
         const token = yield (0, newToken_1.default)(req.body.token, req.user.email);
         const newUser = Object.assign(Object.assign({}, req.user), { token, orders });
+        res.json(newUser);
+    }
+    catch (error) {
+        next(error);
+    }
+}));
+router.post("/change_email", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const newEmail = req.body.newEmail;
+        if (!newEmail) {
+            throw new Error("no new email provided.");
+        }
+        yield User_1.User.updateOne({ email: req.user.email }, { email: newEmail, oldEmail: req.user.email, isVerified: false });
+        const updatedUser = yield User_1.User.findOne({ email: newEmail });
+        const userObject = updatedUser === null || updatedUser === void 0 ? void 0 : updatedUser.toJSON();
+        (0, sendVerificationEmail_1.default)(newEmail);
+        const orders = yield Orders_1.Order.find({ user_id: req.user._id });
+        //neues token und altes speichern
+        const token = yield (0, newToken_1.default)(req.body.token, newEmail);
+        const newUser = Object.assign(Object.assign({}, userObject), { token, orders });
         res.json(newUser);
     }
     catch (error) {
