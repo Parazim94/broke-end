@@ -1,5 +1,6 @@
 import express from "express";
 import { checkToken, CustomRequest } from "../middleware/checkToken";
+import { checkEmail } from "../middleware/checkEmail";
 import { User } from "../models/User";
 import { Order } from "../models/Orders";
 import newToken from "../controllers/newToken";

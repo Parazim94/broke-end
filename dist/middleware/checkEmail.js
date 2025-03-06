@@ -8,17 +8,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.compare = exports.hash = void 0;
-const bcrypt_1 = __importDefault(require("bcrypt"));
-const hash = (password) => __awaiter(void 0, void 0, void 0, function* () {
-    return bcrypt_1.default.hash(password, 10);
+exports.checkEmail = void 0;
+const User_1 = require("../models/User");
+const checkEmail = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield User_1.User.findOne({ email: req.user.email });
+        if (!user) {
+            throw new Error("user not found in checkEmail!!");
+        }
+        else {
+            if (!user.isVerified) {
+                throw new Error("Email not verified!");
+            }
+            else
+                next();
+        }
+    }
+    catch (error) {
+        next(error);
+    }
 });
-exports.hash = hash;
-const compare = (password, hashedPassword) => __awaiter(void 0, void 0, void 0, function* () {
-    return bcrypt_1.default.compare(password, hashedPassword);
-});
-exports.compare = compare;
+exports.checkEmail = checkEmail;

@@ -3,7 +3,9 @@ import { User } from "../models/User";
 import { DeletedToken } from "../models/DeletedToken";
 import { hash, compare } from "../libs/crypto";
 import { createJwt } from "../libs/jwt";
-import { checkToken } from "../middleware/checkToken";
+import { checkToken, CustomRequest } from "../middleware/checkToken";
+import { checkEmail } from "../middleware/checkEmail";
+import sendVerificationEmail from "../libs/sendVerificationEmail";
 const router = express.Router();
 
 router.post("/register", async (req, res, next) => {
@@ -16,6 +18,7 @@ router.post("/register", async (req, res, next) => {
       age,
       hashedPW: hashedPassword,
     });
+    sendVerificationEmail(email);
     res.send(newUser);
   } catch (error) {
     console.log(error);
@@ -50,4 +53,34 @@ router.get("/logout", async (req, res, next) => {
   res.send(message);
 });
 
+router.get(
+  "/verify/:token",
+  checkToken,
+  async (req: CustomRequest, res, next) => {
+    try {
+      await User.updateOne({ email: req.user.email }, { isVerified: true });
+      const user = await User.findOne({ email: req.user.email });
+      if (user) {
+        res.send(
+          `<b style="font-size:25px;">BROKECHAIN : ${user.email} from ${user.userName} is verfied! You can login now!</b>`
+        );
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+router.post("/verificationemail", async (req, res, next) => {
+  try {
+    const email = req.body.email;
+    if (await User.findOne({ email: email })) {
+      sendVerificationEmail(email);
+      res.send("Verification mail send.");
+    } else {
+      throw new Error("No user with the email found");
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 export default router;

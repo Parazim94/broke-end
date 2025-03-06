@@ -8,17 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.compare = exports.hash = void 0;
-const bcrypt_1 = __importDefault(require("bcrypt"));
-const hash = (password) => __awaiter(void 0, void 0, void 0, function* () {
-    return bcrypt_1.default.hash(password, 10);
-});
-exports.hash = hash;
-const compare = (password, hashedPassword) => __awaiter(void 0, void 0, void 0, function* () {
-    return bcrypt_1.default.compare(password, hashedPassword);
-});
-exports.compare = compare;
+const serverUpkeeper = () => {
+    setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
+        const time = yield fetch("https://timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
+        console.log(time);
+    }), 120000);
+};
+exports.default = serverUpkeeper;

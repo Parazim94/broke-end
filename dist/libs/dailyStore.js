@@ -14,7 +14,6 @@ exports.runAtMidnight = runAtMidnight;
 const User_1 = require("../models/User");
 function dailyStore() {
     const now = new Date();
-    console.log(now);
     const midnight = new Date(now);
     midnight.setHours(24, 0, 0, 0); // Set to next midnight
     let timeUntilMidnight = midnight.getTime() - now.getTime(); // Time in milliseconds until midnight

@@ -4,7 +4,7 @@ const tradeHistorySchema = new Schema({
   price: { type: Number, required: true },
   amount: { type: Number, required: true },
   order: { type: Boolean, default: false },
-  date: { type: Date, required: true },
+  date: { type: Date },
 });
 const historySchema = new Schema(
   {

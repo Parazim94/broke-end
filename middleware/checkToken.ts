@@ -12,7 +12,7 @@ export const checkToken = async (
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.body.token;
+  const token = req.body.token || req.params.token;
   const deletedToken = await DeletedToken.findOne({ token: token });
   if (deletedToken?.token) return next(new Error("is logged out!"));
   if (!token) {
