@@ -41,7 +41,6 @@ const manageOrders = (binanceCache) => __awaiter(void 0, void 0, void 0, functio
             if (coin.lastPrice >= order.threshold) {
                 const orderPrice = coin.lastPrice * order.amount;
                 if ((user === null || user === void 0 ? void 0 : user.positions[key]) >= order.amount) {
-                    console.log(user === null || user === void 0 ? void 0 : user.userName);
                     if (user && user.positions) {
                         user.positions[key] = (user.positions[key] || 0) + order.amount;
                         user.cash -= orderPrice;

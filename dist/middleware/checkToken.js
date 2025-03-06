@@ -26,7 +26,6 @@ const checkToken = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     }
     const secret = process.env.JWT_SECRET;
     if (!secret) {
-        console.log("no secret");
         return next(new Error("JWT secret is not defined"));
     }
     try {
@@ -43,7 +42,6 @@ const checkToken = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         }
     }
     catch (err) {
-        console.log("checkTokenError", err);
         return next(new Error("Token verification failed"));
     }
 });

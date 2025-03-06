@@ -22,7 +22,6 @@ router.post("/", checkToken, async (req: CustomRequest, res, next) => {
     const token = await newToken(req.body.token, user.email);
     const orders = await Order.find({ user_id: req.user._id });
     const newUser = { ...updatedUser.toObject(), token, orders };
-    console.log(newUser);
     res.send(newUser);
   } catch (error) {
     next(error);

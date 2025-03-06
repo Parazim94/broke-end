@@ -35,7 +35,6 @@ router.post("/", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, 
         const token = yield (0, newToken_1.default)(req.body.token, user.email);
         const orders = yield Orders_1.Order.find({ user_id: req.user._id });
         const newUser = Object.assign(Object.assign({}, updatedUser.toObject()), { token, orders });
-        console.log(newUser);
         res.send(newUser);
     }
     catch (error) {

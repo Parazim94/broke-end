@@ -20,7 +20,6 @@ export const checkToken = async (
   }
   const secret = process.env.JWT_SECRET;
   if (!secret) {
-    console.log("no secret");
     return next(new Error("JWT secret is not defined"));
   }
   try {
@@ -35,7 +34,6 @@ export const checkToken = async (
       return next(new Error("Invalid token payload"));
     }
   } catch (err) {
-    console.log("checkTokenError", err);
     return next(new Error("Token verification failed"));
   }
 };

@@ -4,7 +4,7 @@ import { createJwt } from "./jwt";
 
 dotenv.config();
 const { AUTH_EMAIL, AUTH_PASS, AUTH_URL } = process.env;
-console.log(AUTH_EMAIL, AUTH_PASS, AUTH_URL);
+
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {

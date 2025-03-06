@@ -45,7 +45,6 @@ export const manageOrders = async (
       if (coin.lastPrice >= order.threshold) {
         const orderPrice = coin.lastPrice * order.amount;
         if (user?.positions[key] >= order.amount) {
-          console.log(user?.userName);
           if (user && user.positions) {
             user.positions[key] = (user.positions[key] || 0) + order.amount;
             user.cash -= orderPrice;

@@ -21,7 +21,6 @@ router.post("/register", async (req, res, next) => {
     sendVerificationEmail(email);
     res.send(newUser);
   } catch (error) {
-    console.log(error);
     next(error);
   }
 });

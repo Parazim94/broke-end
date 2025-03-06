@@ -34,7 +34,6 @@ router.post("/register", (req, res, next) => __awaiter(void 0, void 0, void 0, f
         res.send(newUser);
     }
     catch (error) {
-        console.log(error);
         next(error);
     }
 }));

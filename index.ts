@@ -51,7 +51,6 @@ app.use("*", (req, res, next) => {
 });
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.log("error", err.message);
   res.status(400).send(err.message);
 });
 
