@@ -18,7 +18,7 @@ interface Response extends express.Response {}
 interface NextFunction extends express.NextFunction {}
 
 dotenv.config();
-serverUpkeeper();
+// serverUpkeeper();
 connectDB();
 const app = express();
 
