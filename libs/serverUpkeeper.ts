@@ -1,9 +1,10 @@
 const serverUpkeeper = () => {
   setInterval(async () => {
-    const time = await fetch(
+    const response = await fetch(
       "https://timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam"
     );
+    const time = await response.json();
     console.log(time);
-  }, 120000);
+  }, 60000);
 };
 export default serverUpkeeper;

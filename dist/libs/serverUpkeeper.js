@@ -11,8 +11,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const serverUpkeeper = () => {
     setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
-        const time = yield fetch("https://timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
+        const response = yield fetch("https://timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
+        const time = yield response.json();
         console.log(time);
-    }), 120000);
+    }), 60000);
 };
 exports.default = serverUpkeeper;

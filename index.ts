@@ -8,7 +8,7 @@ import marketRoute from "./routes/marketRouter";
 import tradeRoute from "./routes/tradeRouter";
 import userRoute from "./routes/userRouter";
 import { dailyStore, runAtMidnight } from "./libs/dailyStore";
-import serverUpkeeper from "./libs/serverUpkeeper";
+// import serverUpkeeper from "./libs/serverUpkeeper";
 
 interface Error {
   message: string;
