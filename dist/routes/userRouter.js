@@ -18,6 +18,7 @@ const User_1 = require("../models/User");
 const Orders_1 = require("../models/Orders");
 const newToken_1 = __importDefault(require("../controllers/newToken"));
 const sendVerificationEmail_1 = __importDefault(require("../libs/sendVerificationEmail"));
+const crypto_1 = require("../libs/crypto");
 const router = express_1.default.Router();
 router.post("/settings", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -47,6 +48,31 @@ router.post("/", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, 
         const token = yield (0, newToken_1.default)(req.body.token, req.user.email);
         const newUser = Object.assign(Object.assign({}, req.user), { token, orders });
         res.json(newUser);
+    }
+    catch (error) {
+        next(error);
+    }
+}));
+router.post("/change_password", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        if (req.body.newPassword && req.body.password) {
+            const user = yield User_1.User.findOne({ email: req.user.email });
+            if (user && (yield (0, crypto_1.compare)(req.body.password, user.hashedPW))) {
+                const hashedPW = yield (0, crypto_1.hash)(req.body.newPassword);
+                yield User_1.User.updateOne({ email: req.user.email }, { hashedPW });
+                const orders = yield Orders_1.Order.find({ user_id: req.user._id });
+                //neues token und altes speichern
+                const token = yield (0, newToken_1.default)(req.body.token, req.user.email);
+                const newUser = Object.assign(Object.assign({}, req.user), { token, orders });
+                res.json(newUser);
+            }
+            else {
+                throw new Error("wrong old password or user not found!");
+            }
+        }
+        else {
+            throw new Error("wrong credentials!");
+        }
     }
     catch (error) {
         next(error);

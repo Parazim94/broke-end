@@ -5,6 +5,7 @@ import { User } from "../models/User";
 import { Order } from "../models/Orders";
 import newToken from "../controllers/newToken";
 import sendVerificationEmail from "../libs/sendVerificationEmail";
+import { compare, hash } from "../libs/crypto";
 
 const router = express.Router();
 
@@ -48,6 +49,33 @@ router.post("/", checkToken, async (req: CustomRequest, res, next) => {
     next(error);
   }
 });
+
+router.post(
+  "/change_password",
+  checkToken,
+  async (req: CustomRequest, res, next) => {
+    try {
+      if (req.body.newPassword && req.body.password) {
+        const user = await User.findOne({ email: req.user.email });
+        if (user && (await compare(req.body.password, user.hashedPW))) {
+          const hashedPW = await hash(req.body.newPassword);
+          await User.updateOne({ email: req.user.email }, { hashedPW });
+          const orders = await Order.find({ user_id: req.user._id });
+          //neues token und altes speichern
+          const token = await newToken(req.body.token, req.user.email);
+          const newUser = { ...req.user, token, orders };
+          res.json(newUser);
+        } else {
+          throw new Error("wrong old password or user not found!");
+        }
+      } else {
+        throw new Error("wrong credentials!");
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 router.post(
   "/change_email",
