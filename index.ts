@@ -7,6 +7,7 @@ import authRoute from "./routes/authRouter";
 import marketRoute from "./routes/marketRouter";
 import tradeRoute from "./routes/tradeRouter";
 import userRoute from "./routes/userRouter";
+import aiRoute from "./routes/aiRouter";
 import { dailyStore, runAtMidnight } from "./libs/dailyStore";
 // import serverUpkeeper from "./libs/serverUpkeeper";
 
@@ -33,6 +34,7 @@ app.use(express.json());
 
 const PORT = process.env.PORT;
 
+app.use("/ai", aiRoute);
 app.use("/auth", authRoute);
 
 app.use("/marketData", marketRoute);

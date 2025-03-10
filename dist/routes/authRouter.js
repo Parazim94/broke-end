@@ -18,6 +18,7 @@ const DeletedToken_1 = require("../models/DeletedToken");
 const crypto_1 = require("../libs/crypto");
 const jwt_1 = require("../libs/jwt");
 const checkToken_1 = require("../middleware/checkToken");
+const Orders_1 = require("../models/Orders");
 const sendVerificationEmail_1 = __importDefault(require("../libs/sendVerificationEmail"));
 const router = express_1.default.Router();
 router.post("/register", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -43,8 +44,9 @@ router.post("/login", (req, res, next) => __awaiter(void 0, void 0, void 0, func
         const user = yield User_1.User.findOne({ email: email });
         if (user && user.hashedPW && (yield (0, crypto_1.compare)(password, user.hashedPW))) {
             const jwt = (0, jwt_1.createJwt)(user.email);
-            const userObject = user.toObject();
-            res.status(200).send(Object.assign(Object.assign({}, userObject), { token: jwt }));
+            const userObject = user.toJSON();
+            const orders = yield Orders_1.Order.find({ user_id: user._id });
+            res.status(200).send(Object.assign(Object.assign({}, userObject), { token: jwt, orders }));
         }
         else {
             throw new Error("Login Fehler");

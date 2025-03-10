@@ -15,9 +15,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const checkToken_1 = require("../middleware/checkToken");
 const User_1 = require("../models/User");
-const newToken_1 = __importDefault(require("../controllers/newToken"));
 const Orders_1 = require("../models/Orders");
 const trade_1 = __importDefault(require("../controllers/trade"));
+const createStandardResponse_1 = __importDefault(require("../libs/createStandardResponse"));
 const router = express_1.default.Router();
 router.post("/", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -32,10 +32,7 @@ router.post("/", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, 
         if (!updatedUser)
             throw new Error("User not found after trade");
         //neues token und altes speichern
-        const token = yield (0, newToken_1.default)(req.body.token, user.email);
-        const orders = yield Orders_1.Order.find({ user_id: req.user._id });
-        const newUser = Object.assign(Object.assign({}, updatedUser.toObject()), { token, orders });
-        res.send(newUser);
+        res.send(yield (0, createStandardResponse_1.default)(updatedUser.email, req.body.token));
     }
     catch (error) {
         next(error);
@@ -52,11 +49,7 @@ router.post("/order", checkToken_1.checkToken, (req, res, next) => __awaiter(voi
             threshold,
             user_id: req.user._id,
         });
-        //neues token und altes speichern
-        const token = yield (0, newToken_1.default)(req.body.token, req.user.email);
-        const orders = yield Orders_1.Order.find({ user_id: req.user._id });
-        const newUser = Object.assign(Object.assign({}, req.user), { token, orders });
-        res.send(newUser);
+        res.send(yield (0, createStandardResponse_1.default)(req.user.email, req.body.token));
     }
     catch (error) {
         next(error);
@@ -68,10 +61,7 @@ router.post("/deleteorder", checkToken_1.checkToken, (req, res, next) => __await
         if (!id)
             throw new Error("No order ID provided");
         yield Orders_1.Order.deleteOne({ _id: id });
-        const token = yield (0, newToken_1.default)(req.body.token, req.user.email);
-        const newUser = Object.assign(Object.assign({}, req.user), { token });
-        const orders = yield Orders_1.Order.find({ user_id: req.user._id });
-        res.send(Object.assign(Object.assign({}, newUser), { orders }));
+        res.send(yield (0, createStandardResponse_1.default)(req.user.email, req.body.token));
     }
     catch (error) {
         next(error);
@@ -83,10 +73,7 @@ router.post("/editorder", checkToken_1.checkToken, (req, res, next) => __awaiter
         if (!id)
             throw new Error("No order ID provided");
         yield Orders_1.Order.updateOne({ _id: id }, req.body.order);
-        const token = yield (0, newToken_1.default)(req.body.token, req.user.email);
-        const newUser = Object.assign(Object.assign({}, req.user), { token });
-        const orders = yield Orders_1.Order.find({ user_id: req.user._id });
-        res.send(Object.assign(Object.assign({}, newUser), { orders }));
+        res.send((0, createStandardResponse_1.default)(req.user.email, req.body.token));
     }
     catch (error) {
         next(error);

@@ -5,6 +5,7 @@ import { hash, compare } from "../libs/crypto";
 import { createJwt } from "../libs/jwt";
 import { checkToken, CustomRequest } from "../middleware/checkToken";
 import { checkEmail } from "../middleware/checkEmail";
+import { Order } from "../models/Orders";
 import sendVerificationEmail from "../libs/sendVerificationEmail";
 const router = express.Router();
 
@@ -31,8 +32,9 @@ router.post("/login", async (req, res, next) => {
     const user = await User.findOne({ email: email });
     if (user && user.hashedPW && (await compare(password, user.hashedPW))) {
       const jwt = createJwt(user.email);
-      const userObject = user.toObject();
-      res.status(200).send({ ...userObject, token: jwt });
+      const userObject = user.toJSON();
+      const orders = await Order.find({ user_id: user._id });
+      res.status(200).send({ ...userObject, token: jwt, orders });
     } else {
       throw new Error("Login Fehler");
     }

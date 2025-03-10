@@ -5,6 +5,7 @@ import { User } from "../models/User";
 import newToken from "../controllers/newToken";
 import { Order } from "../models/Orders";
 import trade from "../controllers/trade";
+import createStandardResponse from "../libs/createStandardResponse";
 const router = express.Router();
 
 router.post("/", checkToken, async (req: CustomRequest, res, next) => {
@@ -19,10 +20,8 @@ router.post("/", checkToken, async (req: CustomRequest, res, next) => {
     if (!updatedUser) throw new Error("User not found after trade");
 
     //neues token und altes speichern
-    const token = await newToken(req.body.token, user.email);
-    const orders = await Order.find({ user_id: req.user._id });
-    const newUser = { ...updatedUser.toObject(), token, orders };
-    res.send(newUser);
+
+    res.send(await createStandardResponse(updatedUser.email, req.body.token));
   } catch (error) {
     next(error);
   }
@@ -40,11 +39,7 @@ router.post("/order", checkToken, async (req: CustomRequest, res, next) => {
       threshold,
       user_id: req.user._id,
     });
-    //neues token und altes speichern
-    const token = await newToken(req.body.token, req.user.email);
-    const orders = await Order.find({ user_id: req.user._id });
-    const newUser = { ...req.user, token, orders };
-    res.send(newUser);
+    res.send(await createStandardResponse(req.user.email, req.body.token));
   } catch (error) {
     next(error);
   }
@@ -58,11 +53,8 @@ router.post(
       if (!id) throw new Error("No order ID provided");
 
       await Order.deleteOne({ _id: id });
-      const token = await newToken(req.body.token, req.user.email);
 
-      const newUser = { ...req.user, token };
-      const orders = await Order.find({ user_id: req.user._id });
-      res.send({ ...newUser, orders });
+      res.send(await createStandardResponse(req.user.email, req.body.token));
     } catch (error) {
       next(error);
     }
@@ -74,12 +66,8 @@ router.post("/editorder", checkToken, async (req: CustomRequest, res, next) => {
     if (!id) throw new Error("No order ID provided");
 
     await Order.updateOne({ _id: id }, req.body.order);
-    const token = await newToken(req.body.token, req.user.email);
-    const newUser = { ...req.user, token };
 
-    const orders = await Order.find({ user_id: req.user._id });
-
-    res.send({ ...newUser, orders });
+    res.send(createStandardResponse(req.user.email, req.body.token));
   } catch (error) {
     next(error);
   }

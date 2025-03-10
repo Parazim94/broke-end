@@ -6,10 +6,11 @@ import { Order } from "../models/Orders";
 import newToken from "../controllers/newToken";
 import sendVerificationEmail from "../libs/sendVerificationEmail";
 import { compare, hash } from "../libs/crypto";
+import createStandardResponse from "../libs/createStandardResponse";
 
 const router = express.Router();
 
-router.post("/settings", checkToken, async (req: CustomRequest, res, next) => {
+router.put("/settings", checkToken, async (req: CustomRequest, res, next) => {
   try {
     //loeschen,damit das nicht geaendert wird
     delete req.body.cash;
@@ -18,39 +19,23 @@ router.post("/settings", checkToken, async (req: CustomRequest, res, next) => {
     delete req.body.isVerified;
     delete req.body.tradeHistory;
     await User.updateOne({ email: req.user.email }, req.body);
-    const user = await User.findOne({ email: req.user.email });
 
-    const userObject = user?.toObject();
-
-    //neues token und altes speichern
-    const token = await newToken(req.body.token, req.user.email);
-
-    const newUser = { ...userObject, token };
-
-    res.send(newUser);
-
-    res.send(newUser);
+    res.send(await createStandardResponse(req.user.email, req.body.token));
   } catch (error) {
     console.error("Fehler beim updaten!", error);
+    next(error);
   }
 });
 
 router.post("/", checkToken, async (req: CustomRequest, res, next) => {
   try {
-    const orders = await Order.find({ user_id: req.user._id });
-
-    //neues token und altes speichern
-    const token = await newToken(req.body.token, req.user.email);
-
-    const newUser = { ...req.user, token, orders };
-
-    res.json(newUser);
+    res.json(await createStandardResponse(req.user.email, req.body.token));
   } catch (error) {
     next(error);
   }
 });
 
-router.post(
+router.put(
   "/change_password",
   checkToken,
   async (req: CustomRequest, res, next) => {
@@ -60,11 +45,10 @@ router.post(
         if (user && (await compare(req.body.password, user.hashedPW))) {
           const hashedPW = await hash(req.body.newPassword);
           await User.updateOne({ email: req.user.email }, { hashedPW });
-          const orders = await Order.find({ user_id: req.user._id });
-          //neues token und altes speichern
-          const token = await newToken(req.body.token, req.user.email);
-          const newUser = { ...req.user, token, orders };
-          res.json(newUser);
+
+          res.json(
+            await createStandardResponse(req.user.email, req.body.token)
+          );
         } else {
           throw new Error("wrong old password or user not found!");
         }
@@ -77,7 +61,7 @@ router.post(
   }
 );
 
-router.post(
+router.put(
   "/change_email",
   checkToken,
   async (req: CustomRequest, res, next) => {
@@ -91,17 +75,10 @@ router.post(
         { email: newEmail, oldEmail: req.user.email, isVerified: false }
       );
       const updatedUser = await User.findOne({ email: newEmail });
-      const userObject = updatedUser?.toJSON();
 
       sendVerificationEmail(newEmail);
 
-      const orders = await Order.find({ user_id: req.user._id });
-
-      //neues token und altes speichern
-      const token = await newToken(req.body.token, newEmail);
-
-      const newUser = { ...userObject, token, orders };
-      res.json(newUser);
+      res.json(await createStandardResponse(newEmail, req.body.token));
     } catch (error) {
       next(error);
     }
