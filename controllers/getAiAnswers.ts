@@ -25,7 +25,6 @@ const getAiAnswers = async (message: string) => {
           item.content.replace(/<[^>]+>/g, "").substring(0, 100) + "...";
         newsContext += `${cleanContent}\n\n`;
       });
-      console.log(recentNews);
 
       message = `Ich stelle dir eine Frage, aber bevor du antwortest, hier sind aktuelle Krypto-Nachrichten, die du in deine Antwort einbeziehen kannst, wenn relevant:\n\n${newsContext}\n\nMeine Frage ist: ${message}`;
 

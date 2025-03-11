@@ -20,6 +20,7 @@ const jwt_1 = require("../libs/jwt");
 const checkToken_1 = require("../middleware/checkToken");
 const Orders_1 = require("../models/Orders");
 const sendVerificationEmail_1 = __importDefault(require("../libs/sendVerificationEmail"));
+const createStandardResponse_1 = __importDefault(require("../libs/createStandardResponse"));
 const router = express_1.default.Router();
 router.post("/register", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -67,12 +68,12 @@ router.get("/logout", (req, res, next) => __awaiter(void 0, void 0, void 0, func
         message = "No user to log out!";
     res.send(message);
 }));
-router.get("/verify/:token", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/verify", checkToken_1.checkToken, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield User_1.User.updateOne({ email: req.user.email }, { isVerified: true });
         const user = yield User_1.User.findOne({ email: req.user.email });
         if (user) {
-            res.send(`<b style="font-size:25px;">BROKECHAIN : ${user.email} from ${user.userName} is verfied! You can login now!</b>`);
+            res.send(yield (0, createStandardResponse_1.default)(req.user.email, req.body.token));
         }
     }
     catch (error) {

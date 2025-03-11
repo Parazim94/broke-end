@@ -64,7 +64,10 @@ router.get("/", async (req, res, next) => {
       binanceCache.find((ticker: any) =>
         ticker.symbol.endsWith(coinSymbolUpper + "USDT")
       );
-
+    if (!binanceInfo || Number(binanceInfo.lastPrice) === 0) {
+      return;
+    }
+    console.log(coin.name, binanceInfo.lastPrice);
     return {
       id: coin.id,
       name: coin.name,
@@ -86,7 +89,11 @@ router.get("/", async (req, res, next) => {
     };
   });
 
-  res.send(mergedData);
+  const filteredData = mergedData.filter(
+    (item: any) => item !== null && item !== undefined
+  );
+
+  res.send(filteredData);
 });
 
 router.get("/news", async (req, res, next) => {

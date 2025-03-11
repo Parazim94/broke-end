@@ -7,6 +7,7 @@ import { checkToken, CustomRequest } from "../middleware/checkToken";
 import { checkEmail } from "../middleware/checkEmail";
 import { Order } from "../models/Orders";
 import sendVerificationEmail from "../libs/sendVerificationEmail";
+import createStandardResponse from "../libs/createStandardResponse";
 const router = express.Router();
 
 router.post("/register", async (req, res, next) => {
@@ -54,23 +55,17 @@ router.get("/logout", async (req, res, next) => {
   res.send(message);
 });
 
-router.get(
-  "/verify/:token",
-  checkToken,
-  async (req: CustomRequest, res, next) => {
-    try {
-      await User.updateOne({ email: req.user.email }, { isVerified: true });
-      const user = await User.findOne({ email: req.user.email });
-      if (user) {
-        res.send(
-          `<b style="font-size:25px;">BROKECHAIN : ${user.email} from ${user.userName} is verfied! You can login now!</b>`
-        );
-      }
-    } catch (error) {
-      next(error);
+router.post("/verify", checkToken, async (req: CustomRequest, res, next) => {
+  try {
+    await User.updateOne({ email: req.user.email }, { isVerified: true });
+    const user = await User.findOne({ email: req.user.email });
+    if (user) {
+      res.send(await createStandardResponse(req.user.email, req.body.token));
     }
+  } catch (error) {
+    next(error);
   }
-);
+});
 router.post("/verificationemail", async (req, res, next) => {
   try {
     const email = req.body.email;

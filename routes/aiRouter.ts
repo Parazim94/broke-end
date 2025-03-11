@@ -14,6 +14,7 @@ router.post("/", checkToken, async (req: CustomRequest, res, next) => {
         req.user.email,
         req.body.token
       );
+
       res.json({ ...response, message });
     }
   } catch (error) {}

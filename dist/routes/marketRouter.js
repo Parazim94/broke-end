@@ -71,6 +71,10 @@ router.get("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
         const coinSymbolUpper = coin.symbol.toUpperCase();
         const binanceInfo = Array.isArray(binanceCache) &&
             binanceCache.find((ticker) => ticker.symbol.endsWith(coinSymbolUpper + "USDT"));
+        if (!binanceInfo || Number(binanceInfo.lastPrice) === 0) {
+            return;
+        }
+        console.log(coin.name, binanceInfo.lastPrice);
         return {
             id: coin.id,
             name: coin.name,
@@ -91,7 +95,8 @@ router.get("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
             sparkline: coin.sparkline_in_7d,
         };
     });
-    res.send(mergedData);
+    const filteredData = mergedData.filter((item) => item !== null && item !== undefined);
+    res.send(filteredData);
 }));
 router.get("/news", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const RSS_URL = "https://www.coindesk.com/arc/outboundfeeds/rss/";
