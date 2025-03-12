@@ -11,11 +11,8 @@
         "src": "/(.*)",
         "dest": "/index.ts"
       }
-    ],
-    "crons": [{
-      "path": "/api/cron",
-      "schedule": "0 14 * * *"
-    }]
+    ]
+   
   }
   
    

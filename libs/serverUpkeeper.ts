@@ -1,10 +1,13 @@
-const serverUpkeeper = () => {
+import { Error } from "../models/Error";
+let count = 0;
+const serverUpkeeper = async () => {
   setInterval(async () => {
-    const response = await fetch(
-      "https://timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam"
-    );
-    const time = await response.json();
-    console.log(time);
-  }, 60000);
+    const response = fetch("https://broke-end.vercel.app/huhu");
+    const newError = await Error.create({
+      date: Date.now(),
+      error: `count:${count}`,
+    });
+    count++;
+  }, 300000);
 };
 export default serverUpkeeper;

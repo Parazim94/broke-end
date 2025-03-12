@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import sendVerificationEmail from "./libs/sendVerificationEmail";
 import dotenv from "dotenv";
 import { connectDB } from "./libs/database";
 import authRoute from "./routes/authRouter";
@@ -34,6 +33,9 @@ app.use(express.json());
 
 const PORT = process.env.PORT;
 
+app.use("/huhu", (req, res, next) => {
+  res.send("huhu");
+});
 app.use("/ai", aiRoute);
 app.use("/auth", authRoute);
 

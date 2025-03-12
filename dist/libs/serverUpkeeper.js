@@ -9,11 +9,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const serverUpkeeper = () => {
+const Error_1 = require("../models/Error");
+let count = 0;
+const serverUpkeeper = () => __awaiter(void 0, void 0, void 0, function* () {
     setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
-        const response = yield fetch("https://timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
-        const time = yield response.json();
-        console.log(time);
-    }), 60000);
-};
+        const response = fetch("https://broke-end.vercel.app/huhu");
+        const newError = yield Error_1.Error.create({
+            date: Date.now(),
+            error: `count:${count}`,
+        });
+        count++;
+    }), 300000);
+});
 exports.default = serverUpkeeper;
