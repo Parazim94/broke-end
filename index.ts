@@ -52,7 +52,7 @@ app.use("/api/cron", async (req, res, send) => {
 
 // Für alle unbekannten Routen liefere die index.html
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "dist", "index.html"));
+  res.sendFile(path.join(__dirname, "../../BrokeChain/dist"));
 });
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
