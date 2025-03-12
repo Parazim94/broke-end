@@ -34,7 +34,7 @@ app.use(express.json());
 
 const PORT = process.env.PORT;
 
-app.use(express.static(path.join(__dirname, "dist")));
+app.use(express.static(path.join(__dirname, "../../BrokeChain/dist")));
 
 app.use("/ai", aiRoute);
 app.use("/auth", authRoute);
