@@ -8,7 +8,7 @@ import tradeRoute from "./routes/tradeRouter";
 import userRoute from "./routes/userRouter";
 import aiRoute from "./routes/aiRouter";
 import { dailyStore, runAtMidnight } from "./libs/dailyStore";
-// import path from "path";
+import path from "path";
 // import serverUpkeeper from "./libs/serverUpkeeper";
 
 interface Error {
@@ -34,7 +34,7 @@ app.use(express.json());
 
 const PORT = process.env.PORT;
 
-// app.use(express.static(path.join(__dirname, "../../BrokeChain/dist")));
+app.use(express.static(path.join(__dirname, "../../BrokeChain/dist")));
 
 app.use("/ai", aiRoute);
 app.use("/auth", authRoute);
@@ -50,10 +50,11 @@ app.use("/api/cron", async (req, res, send) => {
   res.status(202).json({ message: "daily fetch" });
 });
 
-// // Für alle unbekannten Routen liefere die index.html
-// app.get("*", (req, res) => {
-//   res.sendFile(path.join(__dirname, "../../BrokeChain/dist"));
-// });
+// Für alle unbekannten Routen liefere die index.html
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "../../BrokeChain/dist"));
+});
+
 app.use("*", (req, res, next) => {
   res.send("oioioi,not found");
 });
