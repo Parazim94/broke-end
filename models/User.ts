@@ -26,7 +26,7 @@ const userSchema = new Schema(
     history: [historySchema], //trade.id
     positions: { type: Object, default: {} }, //symbol,value
     favorites: [String],
-    prefTheme: [String],
+    prefTheme: { type: [String], default: ["dark", "#0000ff"] },
     tradeHistory: [tradeHistorySchema],
   },
   { timestamps: true }
