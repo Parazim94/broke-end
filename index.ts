@@ -55,9 +55,9 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../../BrokeChain/dist"));
 });
 
-// app.use("*", (req, res, next) => {
-//   res.send("oioioi,not found");
-// });
+app.use("*", (req, res, next) => {
+  res.sendFile(path.join(__dirname, "../../BrokeChain/dist"));
+});
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(400).send(err.message);
