@@ -51,12 +51,16 @@ app.use("/api/cron", async (req, res, send) => {
 });
 
 // Für alle unbekannten Routen liefere die index.html
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../BrokeChain/dist"));
-});
+// app.get("/", (req, res) => {
+//   res.sendFile(path.join(__dirname, "../../BrokeChain/dist"));
+// });
 
-app.use("/*", (req, res, next) => {
-  res.sendFile(path.join(__dirname, "../../BrokeChain/dist"));
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'build', 'index.html'));
+// });
+
+app.use("*", (req, res, next) => {
+  res.sendFile(path.join(__dirname, "../../BrokeChain/dist", "index.html"));
 });
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
