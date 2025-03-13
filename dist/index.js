@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -23,12 +14,39 @@ const userRouter_1 = __importDefault(require("./routes/userRouter"));
 const aiRouter_1 = __importDefault(require("./routes/aiRouter"));
 const dailyStore_1 = require("./libs/dailyStore");
 const path_1 = __importDefault(require("path"));
+const passport_google_oauth20_1 = require("passport-google-oauth20");
+const express_session_1 = __importDefault(require("express-session"));
+const passport_1 = __importDefault(require("passport"));
 dotenv_1.default.config();
 // serverUpkeeper();
 (0, database_1.connectDB)();
-const app = (0, express_1.default)();
 (0, dailyStore_1.dailyStore)();
-// sendVerificationEmail("jbantin@gmx.de");
+const app = (0, express_1.default)();
+// Session setup
+app.use((0, express_session_1.default)({
+    secret: "your-secret-key",
+    resave: false,
+    saveUninitialized: true,
+}));
+// Passport initialization
+app.use(passport_1.default.initialize());
+app.use(passport_1.default.session());
+// Passport Google OAuth2.0 Strategy
+passport_1.default.use(new passport_google_oauth20_1.Strategy({
+    clientID: "YOUR_GOOGLE_CLIENT_ID",
+    clientSecret: "YOUR_GOOGLE_CLIENT_SECRET",
+    callbackURL: "http://localhost:3000/auth/google/callback",
+}, (accessToken, refreshToken, profile, done) => {
+    // Here you can handle user profile data (e.g., save to database)
+    return done(null, profile);
+}));
+// Serialize and deserialize user
+passport_1.default.serializeUser((user, done) => {
+    done(null, user);
+});
+passport_1.default.deserializeUser((user, done) => {
+    done(null, user);
+});
 app.use((0, cors_1.default)());
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
@@ -36,13 +54,16 @@ const PORT = process.env.PORT;
 app.use(express_1.default.static(path_1.default.join(__dirname, "../../BrokeChain/dist")));
 app.use("/ai", aiRouter_1.default);
 app.use("/auth", authRouter_1.default);
+app.get("/test", (_, res) => {
+    res.send("test");
+});
 app.use("/marketData", marketRouter_1.default);
 app.use("/trade", tradeRouter_1.default);
 app.use("/user", userRouter_1.default);
-app.use("/api/cron", (req, res, send) => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, dailyStore_1.runAtMidnight)();
-    res.status(202).json({ message: "daily fetch" });
-}));
+// app.use("/api/cron", async (req, res, send) => {
+//   await runAtMidnight();
+//   res.status(202).json({ message: "daily fetch" });
+// });
 // Für alle unbekannten Routen liefere die index.html
 // app.get("/", (req, res) => {
 //   res.sendFile(path.join(__dirname, "../../BrokeChain/dist"));

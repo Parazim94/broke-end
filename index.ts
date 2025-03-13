@@ -9,6 +9,9 @@ import userRoute from "./routes/userRouter";
 import aiRoute from "./routes/aiRouter";
 import { dailyStore, runAtMidnight } from "./libs/dailyStore";
 import path from "path";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import session from "express-session";
+import passport from "passport";
 // import serverUpkeeper from "./libs/serverUpkeeper";
 
 interface Error {
@@ -21,11 +24,46 @@ interface NextFunction extends express.NextFunction {}
 dotenv.config();
 // serverUpkeeper();
 connectDB();
-const app = express();
-
 dailyStore();
 
-// sendVerificationEmail("jbantin@gmx.de");
+const app = express();
+
+// Session setup
+app.use(
+  session({
+    secret: "your-secret-key",
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+
+// Passport initialization
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Passport Google OAuth2.0 Strategy
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: "YOUR_GOOGLE_CLIENT_ID",
+      clientSecret: "YOUR_GOOGLE_CLIENT_SECRET",
+      callbackURL: "http://localhost:3000/auth/google/callback",
+    },
+    (accessToken, refreshToken, profile, done) => {
+      // Here you can handle user profile data (e.g., save to database)
+      return done(null, profile);
+    }
+  )
+);
+
+// Serialize and deserialize user
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+
+passport.deserializeUser((user: any, done) => {
+  done(null, user as Express.User);
+});
 
 app.use(cors());
 
@@ -39,7 +77,7 @@ app.use(express.static(path.join(__dirname, "../../BrokeChain/dist")));
 app.use("/ai", aiRoute);
 app.use("/auth", authRoute);
 
-app.get("/test", (req, res, next) => {
+app.get("/test", (_, res) => {
   res.send("test");
 });
 
