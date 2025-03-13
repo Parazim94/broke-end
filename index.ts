@@ -39,20 +39,21 @@ app.use(express.static(path.join(__dirname, "../../BrokeChain/dist")));
 app.use("/ai", aiRoute);
 app.use("/auth", authRoute);
 
+app.get("/test", (req, res, next) => {
+  res.send("test");
+});
+
 app.use("/marketData", marketRoute);
 
 app.use("/trade", tradeRoute);
 
 app.use("/user", userRoute);
 
-app.use("/api/cron", async (req, res, send) => {
-  await runAtMidnight();
-  res.status(202).json({ message: "daily fetch" });
-});
+// app.use("/api/cron", async (req, res, send) => {
+//   await runAtMidnight();
+//   res.status(202).json({ message: "daily fetch" });
+// });
 
-app.get("/test", (req, res, next) => {
-  res.send("test");
-});
 // Für alle unbekannten Routen liefere die index.html
 // app.get("/", (req, res) => {
 //   res.sendFile(path.join(__dirname, "../../BrokeChain/dist"));
