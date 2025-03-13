@@ -50,6 +50,9 @@ app.use("/api/cron", async (req, res, send) => {
   res.status(202).json({ message: "daily fetch" });
 });
 
+app.get("/test", (req, res, next) => {
+  res.send("test");
+});
 // Für alle unbekannten Routen liefere die index.html
 // app.get("/", (req, res) => {
 //   res.sendFile(path.join(__dirname, "../../BrokeChain/dist"));

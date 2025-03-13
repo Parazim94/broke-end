@@ -22,9 +22,9 @@ const tradeRouter_1 = __importDefault(require("./routes/tradeRouter"));
 const userRouter_1 = __importDefault(require("./routes/userRouter"));
 const aiRouter_1 = __importDefault(require("./routes/aiRouter"));
 const dailyStore_1 = require("./libs/dailyStore");
-const serverUpkeeper_1 = __importDefault(require("./libs/serverUpkeeper"));
+const path_1 = __importDefault(require("path"));
 dotenv_1.default.config();
-(0, serverUpkeeper_1.default)();
+// serverUpkeeper();
 (0, database_1.connectDB)();
 const app = (0, express_1.default)();
 (0, dailyStore_1.dailyStore)();
@@ -33,9 +33,7 @@ app.use((0, cors_1.default)());
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 const PORT = process.env.PORT;
-app.use("/huhu", (req, res, next) => {
-    res.send("huhu");
-});
+app.use(express_1.default.static(path_1.default.join(__dirname, "../../BrokeChain/dist")));
 app.use("/ai", aiRouter_1.default);
 app.use("/auth", authRouter_1.default);
 app.use("/marketData", marketRouter_1.default);
@@ -45,8 +43,15 @@ app.use("/api/cron", (req, res, send) => __awaiter(void 0, void 0, void 0, funct
     yield (0, dailyStore_1.runAtMidnight)();
     res.status(202).json({ message: "daily fetch" });
 }));
+// Für alle unbekannten Routen liefere die index.html
+// app.get("/", (req, res) => {
+//   res.sendFile(path.join(__dirname, "../../BrokeChain/dist"));
+// });
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'build', 'index.html'));
+// });
 app.use("*", (req, res, next) => {
-    res.status(404).send("Oioioi,site not found!");
+    res.sendFile(path_1.default.join(__dirname, "../../BrokeChain/dist", "index.html"));
 });
 app.use((err, req, res, next) => {
     res.status(400).send(err.message);

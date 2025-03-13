@@ -26,8 +26,8 @@ const getAiAnswers = (message) => __awaiter(void 0, void 0, void 0, function* ()
         const response = yield fetch(API_URL);
         const data = yield response.json();
         if (data && data.length != 0) {
-            // Erstelle einen kurzen Überblick über die letzten 5 Nachrichten
-            const recentNews = data.items ? data.items.slice(0, 5) : [];
+            // Erstelle einen kurzen Überblick über die letzten 10 Nachrichten
+            const recentNews = data.items ? data.items.slice(0, 10) : [];
             let newsContext = "Hier sind aktuelle Krypto-Nachrichten:\n\n";
             recentNews.forEach((item, index) => {
                 newsContext += `${index + 1}. ${item.title}\n`;
@@ -41,9 +41,6 @@ const getAiAnswers = (message) => __awaiter(void 0, void 0, void 0, function* ()
         }
         else
             throw new Error("no data!");
-        // const newsContext = prepareNewsContext();
-        // let fullPrompt = userPrompt;
-        // Füge Nachrichtenkontext hinzu, wenn Nachrichten verfügbar sind
     }
     catch (error) {
         console.error("Error generating AI response:", error);
