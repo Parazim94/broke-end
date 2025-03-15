@@ -34,6 +34,12 @@ dailyStore();
 const app = express();
 const MY_SECRET_KEY = process.env.MY_SECRET_KEY || "";
 
+// Neue Middleware, um den COOP-Header zu setzen
+app.use((req, res, next) => {
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+  next();
+});
+
 // Session setup
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "";
