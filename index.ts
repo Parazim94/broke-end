@@ -12,6 +12,11 @@ import path from "path";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 
+// Debug-Ausgaben (nur zu Testzwecken – keine sensitiven Daten ausgeben)
+console.log("Google Client ID:", process.env.GOOGLE_CLIENT_ID ? "geladen" : "NICHT geladen");
+console.log("Google Client Secret:", process.env.GOOGLE_CLIENT_SECRET ? "geladen" : "NICHT geladen");
+console.log("Google Callback URL:", process.env.GOOGLE_CALLBACK_URL || "Fallback-URL verwendet");
+
 // import serverUpkeeper from "./libs/serverUpkeeper";
 
 interface Error {
