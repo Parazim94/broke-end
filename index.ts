@@ -81,13 +81,11 @@ const PORT = process.env.PORT;
 
 app.use(express.static(path.join(__dirname, "../../BrokeChain/dist")));
 
+app.use("/auth", authRoute);  // Auth-Routen zuerst einbinden
+
 app.use("/ai", aiRoute);
-app.use("/auth", authRoute);
-
 app.use("/marketData", marketRoute);
-
 app.use("/trade", tradeRoute);
-
 app.use("/user", userRoute);
 
 // app.use("/api/cron", async (req, res, send) => {
@@ -104,7 +102,9 @@ app.use("/user", userRoute);
 //   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 // });
 
+// Catch-all‑Route als letztes (nicht für API‑Routes verwenden)
 app.use("*", (req, res, next) => {
+  console.log("Fallback Route aufgerufen für", req.method, req.originalUrl);
   res.sendFile(path.join(__dirname, "../../BrokeChain/dist", "index.html"));
 });
 
