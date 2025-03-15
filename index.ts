@@ -89,30 +89,17 @@ const PORT = process.env.PORT;
 
 // Neue Google-Auth-Route
 
-app.use(express.static(path.join(__dirname, "../../BrokeChain/dist")));
-
-app.use("/auth", authRoute);  // Auth-Routen zuerst einbinden
-
+// Registrieren Sie zuerst alle API‑Routen
+app.use("/auth", authRoute);
 app.use("/ai", aiRoute);
 app.use("/marketData", marketRoute);
 app.use("/trade", tradeRoute);
 app.use("/user", userRoute);
 
-// app.use("/api/cron", async (req, res, send) => {
-//   await runAtMidnight();
-//   res.status(202).json({ message: "daily fetch" });
-// });
+// Jetzt statische Dateien (nur für Frontend) bereitstellen
+app.use(express.static(path.join(__dirname, "../../BrokeChain/dist")));
 
-// Für alle unbekannten Routen liefere die index.html
-// app.get("/", (req, res) => {
-//   res.sendFile(path.join(__dirname, "../../BrokeChain/dist"));
-// });
-
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'build', 'index.html'));
-// });
-
-// Catch-all‑Route als letztes (nicht für API‑Routes verwenden)
+// Catch-all‑Route als letztes
 app.use("*", (req, res, next) => {
   console.log("Fallback Route aufgerufen für", req.method, req.originalUrl);
   res.sendFile(path.join(__dirname, "../../BrokeChain/dist", "index.html"));

@@ -67,14 +67,25 @@ router.get(
   }),
   async (req, res, next) => {
     try {
+      console.log("Google Callback reached");
+      console.log("req.user:", req.user);
+      
       const googleUser = req.user as any;
+      if (!googleUser) {
+        console.error("Kein googleUser Objekt gefunden");
+        throw new Error("Google user retrieval failed");
+      }
       const email = googleUser?.emails?.[0]?.value;
       const name = googleUser?.displayName || "Google User";
+      console.log("Extracted email:", email);
+      console.log("Extracted name:", name);
       if (!email) {
         throw new Error("Google user email not found");
       }
       let user = await User.findOne({ email });
+      console.log("User existing in DB:", user);
       if (!user) {
+        console.log("Kein User gefunden, erstelle neuen User");
         user = await User.create({
           email,
           userName: name,
@@ -82,10 +93,16 @@ router.get(
           hashedPW: "googleUser", // Platzhalter, da der Login über Google erfolgt
         });
         // Optional: sendVerificationEmail(email);
+        console.log("Neuer User erstellt:", user);
+      } else {
+        console.log("User wurde gefunden:", user);
       }
       const token = createJwt(user.email);
+      console.log("Token generiert:", token.substring(0, 15) + "...");
+      console.log("Callback erfolgreich, sende User-Daten zurück.");
       res.send({ ...user.toJSON(), token });
     } catch (error) {
+      console.error("Fehler in /google/callback:", error);
       next(error);
     }
   }
