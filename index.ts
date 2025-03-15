@@ -9,6 +9,8 @@ import userRoute from "./routes/userRouter";
 import aiRoute from "./routes/aiRouter";
 import { dailyStore, runAtMidnight } from "./libs/dailyStore";
 import path from "path";
+import passport from "passport";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 
 // import serverUpkeeper from "./libs/serverUpkeeper";
 
