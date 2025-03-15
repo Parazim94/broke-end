@@ -90,13 +90,13 @@ const PORT = process.env.PORT;
 // Neue Google-Auth-Route
 
 // Registrieren Sie zuerst alle API‑Routen
-app.use("/auth", authRoute);
+app.use("/auth", authRoute); // Auth-Routen zuerst einbinden
 app.use("/ai", aiRoute);
 app.use("/marketData", marketRoute);
 app.use("/trade", tradeRoute);
 app.use("/user", userRoute);
 
-// Jetzt statische Dateien (nur für Frontend) bereitstellen
+// Danach statische Dateien bereitstellen:
 app.use(express.static(path.join(__dirname, "../../BrokeChain/dist")));
 
 // Catch-all‑Route als letztes
