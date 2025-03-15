@@ -58,11 +58,6 @@ const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || "";
 passport.use(
   new GoogleStrategy(
     {
-      clientID: process.env.GOOGLE_CLIENT_ID!, // Verwenden Sie Ihre Umgebungsvariable
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!, // Verwenden Sie Ihre Umgebungsvariable
-      callbackURL:
-        process.env.GOOGLE_CALLBACK_URL ||
-        "http://localhost:3000/auth/google/callback",
       clientID: process.env.GOOGLE_CLIENT_ID!, // Muss in .env korrekt gesetzt sein
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!, // Muss in .env korrekt gesetzt sein
       // Vollständige URL verwenden und genau so registrieren:
