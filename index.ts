@@ -99,6 +99,13 @@ app.use("/user", userRoute);
 // Danach statische Dateien bereitstellen:
 app.use(express.static(path.join(__dirname, "../../BrokeChain/dist")));
 
+app.use(passport.initialize());
+
+// Route zum Starten des OAuth-Flows
+app.get('/auth/google', 
+  passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+
 // Catch-all‑Route als letztes
 app.use("*", (req, res, next) => {
   console.log("Fallback Route aufgerufen für", req.method, req.originalUrl);
