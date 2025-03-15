@@ -45,7 +45,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID!, // Verwenden Sie Ihre Umgebungsvariable
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!, // Verwenden Sie Ihre Umgebungsvariable
-      callbackURL: process.env.GOOGLE_CALLBACK_URL || "http://localhost:3000/auth/google/callback",
+      callbackURL: process.env.GOOGLE_CALLBACK_URL || "broke.dev-space.vip/auth/google/callback",
     },
     (accessToken, refreshToken, profile, done) => {
       // Here you can handle user profile data (e.g., save to database)

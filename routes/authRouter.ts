@@ -8,6 +8,9 @@ import { checkEmail } from "../middleware/checkEmail";
 import { Order } from "../models/Orders";
 import sendVerificationEmail from "../libs/sendVerificationEmail";
 import createStandardResponse from "../libs/createStandardResponse";
+import passport from "passport";
+
+
 const router = express.Router();
 
 router.post("/google", async (req, res, next) => {
@@ -118,4 +121,30 @@ router.post("/verificationemail", async (req, res, next) => {
     next(error);
   }
 });
+
+router.get("/google/callback", passport.authenticate("google", { session: false, failureRedirect: "/login" }), async (req, res, next) => {
+  try {
+    const googleUser = req.user as any;
+    const email = googleUser?.emails?.[0]?.value;
+    const name = googleUser?.displayName || "Google User";
+    if (!email) {
+      throw new Error("Google user email not found");
+    }
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = await User.create({
+        email,
+        userName: name,
+        age: 18, // Standardwert, ggf. anpassen
+        hashedPW: "googleUser", // Platzhalter, da der Login über Google erfolgt
+      });
+      // Optional: sendVerificationEmail(email);
+    }
+    const token = createJwt(user.email);
+    res.send({ ...user.toJSON(), token });
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default router;
