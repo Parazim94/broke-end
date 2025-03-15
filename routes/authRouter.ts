@@ -23,8 +23,9 @@ router.post("/google", async (req, res, next) => {
     const googleResp = await fetch(
       `https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${accessToken}`
     );
-    // Logge gesamten Response-Text vor dem Parsen
-    const responseText = await googleResp.text();
+    // Kopie der Response erstellen, um den Body sicher zu lesen
+    const clonedResp = googleResp.clone();
+    const responseText = await clonedResp.text();
     console.log("Google response text:", responseText);
     if (!googleResp.ok) {
       throw new Error("Ungültiger Google accessToken");
