@@ -10,6 +10,45 @@ import sendVerificationEmail from "../libs/sendVerificationEmail";
 import createStandardResponse from "../libs/createStandardResponse";
 const router = express.Router();
 
+router.post("/google", async (req, res, next) => {
+  try {
+    const { accessToken } = req.body;
+    if (!accessToken) {
+      throw new Error("Kein accessToken übergeben");
+    }
+    // Google-Token verifizieren
+    const googleResp = await fetch(
+      `https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${accessToken}`
+    );
+    if (!googleResp.ok) {
+      throw new Error("Ungültiger Google accessToken");
+    }
+    const googleData = await googleResp.json();
+    // Extrahiere benötigte Daten; googleData enthält u.a. email und name (falls vorhanden)
+    const email = googleData.email;
+    const name = googleData.name || "Google User";
+    if (!email) {
+      throw new Error("Kein Email-Feld im Google-Response gefunden");
+    }
+    // Prüfen ob User existiert, sonst erstellen
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = await User.create({
+        email,
+        userName: name,
+        age: 18, // Standardwert, evtl. angepasst werden
+        hashedPW: "googleUser", // Platzhalter; im echten System anders behandeln
+      });
+      // Optional: sendVerificationEmail(email);
+    }
+    // Token generieren
+    const token = createJwt(user.email);
+    res.send({ ...user.toJSON(), token });
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.post("/register", async (req, res, next) => {
   try {
     const { userName, email, password, age } = req.body;

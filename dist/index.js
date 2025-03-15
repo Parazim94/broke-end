@@ -22,21 +22,25 @@ dotenv_1.default.config();
 (0, database_1.connectDB)();
 (0, dailyStore_1.dailyStore)();
 const app = (0, express_1.default)();
+const MY_SECRET_KEY = process.env.MY_SECRET_KEY || "";
 // Session setup
 app.use((0, express_session_1.default)({
-    secret: "your-secret-key",
+    secret: MY_SECRET_KEY,
     resave: false,
     saveUninitialized: true,
 }));
 // Passport initialization
 app.use(passport_1.default.initialize());
 app.use(passport_1.default.session());
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "";
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || "";
 // Passport Google OAuth2.0 Strategy
 passport_1.default.use(new passport_google_oauth20_1.Strategy({
-    clientID: "YOUR_GOOGLE_CLIENT_ID",
-    clientSecret: "YOUR_GOOGLE_CLIENT_SECRET",
+    clientID: GOOGLE_CLIENT_ID,
+    clientSecret: GOOGLE_CLIENT_SECRET,
     callbackURL: "http://localhost:3000/auth/google/callback",
 }, (accessToken, refreshToken, profile, done) => {
+    console.log(profile);
     // Here you can handle user profile data (e.g., save to database)
     return done(null, profile);
 }));
@@ -48,15 +52,29 @@ passport_1.default.deserializeUser((user, done) => {
     done(null, user);
 });
 app.use((0, cors_1.default)());
-app.use((0, cors_1.default)());
 app.use(express_1.default.json());
+// Routes
+app.get("/auth/google", passport_1.default.authenticate("google", { scope: ["profile", "email"] }));
+app.get("/auth/google/callback", passport_1.default.authenticate("google", { failureRedirect: "/login" }), (req, res) => {
+    // Successful authentication, redirect to React app
+    res.redirect("http://localhost:3000");
+});
+app.get("/logout", (req, res) => {
+    req.logout((err) => {
+        if (err) {
+            console.error("Error during logout:", err);
+            return res.status(500).send("Logout failed");
+        }
+        res.redirect("http://localhost:3000");
+    });
+});
+app.get("/user", (req, res) => {
+    res.send(req.user);
+});
 const PORT = process.env.PORT;
 app.use(express_1.default.static(path_1.default.join(__dirname, "../../BrokeChain/dist")));
 app.use("/ai", aiRouter_1.default);
 app.use("/auth", authRouter_1.default);
-app.get("/test", (_, res) => {
-    res.send("test");
-});
 app.use("/marketData", marketRouter_1.default);
 app.use("/trade", tradeRouter_1.default);
 app.use("/user", userRouter_1.default);

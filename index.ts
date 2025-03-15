@@ -9,9 +9,7 @@ import userRoute from "./routes/userRouter";
 import aiRoute from "./routes/aiRouter";
 import { dailyStore, runAtMidnight } from "./libs/dailyStore";
 import path from "path";
-import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import session from "express-session";
-import passport from "passport";
+
 // import serverUpkeeper from "./libs/serverUpkeeper";
 
 interface Error {
@@ -27,19 +25,12 @@ connectDB();
 dailyStore();
 
 const app = express();
+const MY_SECRET_KEY = process.env.MY_SECRET_KEY || "";
 
 // Session setup
-app.use(
-  session({
-    secret: "your-secret-key",
-    resave: false,
-    saveUninitialized: true,
-  })
-);
 
-// Passport initialization
-app.use(passport.initialize());
-app.use(passport.session());
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "";
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || "";
 
 // Passport Google OAuth2.0 Strategy
 passport.use(
@@ -72,14 +63,12 @@ app.use(express.json());
 
 const PORT = process.env.PORT;
 
+// Neue Google-Auth-Route
+
 app.use(express.static(path.join(__dirname, "../../BrokeChain/dist")));
 
 app.use("/ai", aiRoute);
 app.use("/auth", authRoute);
-
-app.get("/test", (_, res) => {
-  res.send("test");
-});
 
 app.use("/marketData", marketRoute);
 
