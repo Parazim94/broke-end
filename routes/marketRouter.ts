@@ -67,7 +67,7 @@ router.get("/", async (req, res, next) => {
     if (!binanceInfo || Number(binanceInfo.lastPrice) === 0) {
       return;
     }
-    console.log(coin.name, binanceInfo.lastPrice);
+    // console.log(coin.name, binanceInfo.lastPrice);
     return {
       id: coin.id,
       name: coin.name,
