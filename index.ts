@@ -45,9 +45,9 @@ app.use(passport.session());
 passport.use(
   new GoogleStrategy(
     {
-      clientID: "YOUR_GOOGLE_CLIENT_ID",
-      clientSecret: "YOUR_GOOGLE_CLIENT_SECRET",
-      callbackURL: "http://localhost:3000/auth/google/callback",
+      clientID: process.env.GOOGLE_CLIENT_ID!, // Verwenden Sie Ihre Umgebungsvariable
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!, // Verwenden Sie Ihre Umgebungsvariable
+      callbackURL: process.env.GOOGLE_CALLBACK_URL || "http://localhost:3000/auth/google/callback",
     },
     (accessToken, refreshToken, profile, done) => {
       // Here you can handle user profile data (e.g., save to database)
