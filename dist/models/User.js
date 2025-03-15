@@ -3,21 +3,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const mongoose_1 = require("mongoose");
 const tradeHistorySchema = new mongoose_1.Schema({
-  symbol: { type: String, required: true },
-  price: { type: Number, required: true },
-  amount: { type: Number, required: true },
-  order: { type: Boolean, default: false },
-  date: { type: Date },
+    symbol: { type: String, required: true },
+    price: { type: Number, required: true },
+    amount: { type: Number, required: true },
+    order: { type: Boolean, default: false },
+    date: { type: Date },
 });
-const historySchema = new mongoose_1.Schema(
-  {
+const historySchema = new mongoose_1.Schema({
     total: Number,
     date: Date,
-  },
-  { _id: false } // Disable _id for history subdocuments
+}, { _id: false } // Disable _id for history subdocuments
 );
-const userSchema = new mongoose_1.Schema(
-  {
+const userSchema = new mongoose_1.Schema({
     userName: String,
     email: { type: String, required: true, unique: true },
     oldEmail: { type: String },
@@ -29,17 +26,15 @@ const userSchema = new mongoose_1.Schema(
     history: [historySchema], //trade.id
     positions: { type: Object, default: {} }, //symbol,value
     favorites: [String],
-    prefTheme: { type: [String], default: ["dark", "#00CED1"] },
+    prefTheme: { type: [String], default: ["dark", "#0000ff"] },
     tradeHistory: [tradeHistorySchema],
-  },
-  { timestamps: true }
-);
+}, { timestamps: true });
 userSchema.methods.toJSON = function () {
-  const obj = this.toObject();
-  delete obj.hashedPW;
-  delete obj.__v;
-  delete obj.oldEmail;
-  obj.tradeHistory = obj.tradeHistory.slice(-10);
-  return obj;
+    const obj = this.toObject();
+    delete obj.hashedPW;
+    delete obj.__v;
+    delete obj.oldEmail;
+    obj.tradeHistory = obj.tradeHistory.slice(-10);
+    return obj;
 };
 exports.User = (0, mongoose_1.model)("User", userSchema);
