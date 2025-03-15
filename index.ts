@@ -13,9 +13,18 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 
 // Debug-Ausgaben (nur zu Testzwecken – keine sensitiven Daten ausgeben)
-console.log("Google Client ID:", process.env.GOOGLE_CLIENT_ID ? "geladen" : "NICHT geladen");
-console.log("Google Client Secret:", process.env.GOOGLE_CLIENT_SECRET ? "geladen" : "NICHT geladen");
-console.log("Google Callback URL:", process.env.GOOGLE_CALLBACK_URL || "Fallback-URL verwendet");
+console.log(
+  "Google Client ID:",
+  process.env.GOOGLE_CLIENT_ID ? "geladen" : "NICHT geladen"
+);
+console.log(
+  "Google Client Secret:",
+  process.env.GOOGLE_CLIENT_SECRET ? "geladen" : "NICHT geladen"
+);
+console.log(
+  "Google Callback URL:",
+  process.env.GOOGLE_CALLBACK_URL || "Fallback-URL verwendet"
+);
 
 // import serverUpkeeper from "./libs/serverUpkeeper";
 
@@ -52,7 +61,9 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID!, // Muss in .env korrekt gesetzt sein
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!, // Muss in .env korrekt gesetzt sein
       // Vollständige URL verwenden und genau so registrieren:
-      callbackURL: process.env.GOOGLE_CALLBACK_URL || "https://broke.dev-space.vip/auth/google/callback",
+      callbackURL:
+        process.env.GOOGLE_CALLBACK_URL ||
+        "https://broke.dev-space.vip/auth/google/callback",
     },
     (accessToken, refreshToken, profile, done) => {
       // Here you can handle user profile data (e.g., save to database)
@@ -72,7 +83,6 @@ passport.deserializeUser((user: any, done) => {
 
 app.use(cors());
 
-app.use(cors());
 app.use(express.json());
 
 const PORT = process.env.PORT;
