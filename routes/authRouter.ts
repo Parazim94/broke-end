@@ -23,11 +23,19 @@ router.post("/google", async (req, res, next) => {
     const googleResp = await fetch(
       `https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${accessToken}`
     );
+    // Logge gesamten Response-Text vor dem Parsen
+    const responseText = await googleResp.text();
+    console.log("Google response text:", responseText);
     if (!googleResp.ok) {
       throw new Error("Ungültiger Google accessToken");
     }
-    const googleData = await googleResp.json();
-    // Extrahiere benötigte Daten; googleData enthält u.a. email und name (falls vorhanden)
+    let googleData;
+    try {
+      googleData = JSON.parse(responseText);
+    } catch (e) {
+      console.error("Fehler beim JSON parsen:", e);
+      throw new Error("Fehler beim JSON parsen aus Google response");
+    }
     const email = googleData.email;
     const name = googleData.name || "Google User";
     if (!email) {
