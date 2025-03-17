@@ -54,7 +54,7 @@ passport.use(
 router.post("/google", (req: express.Request, res: express.Response, next: express.NextFunction) => {
   (async () => {
     try {
-      const { token } = req.body;
+      const { token } = req.body.token;
     
     if (!token) {
       return res.status(400).send("Kein Token bereitgestellt");
