@@ -2,7 +2,7 @@ import express from "express";
 import session from "express-session";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import { OAuth2Client } from 'google-auth-library';
+import { OAuth2Client } from "google-auth-library";
 import { User } from "../models/User";
 import { DeletedToken } from "../models/DeletedToken";
 import { hash, compare } from "../libs/crypto";
@@ -12,91 +12,44 @@ import { checkEmail } from "../middleware/checkEmail";
 import { Order } from "../models/Orders";
 import sendVerificationEmail from "../libs/sendVerificationEmail";
 import createStandardResponse from "../libs/createStandardResponse";
-
+import axios from "axios";
 const router = express.Router();
-const MY_SECRET_KEY = process.env.MY_SECRET_KEY || "defaultSecret";
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "";
-const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || "";
-const GOOGLE_CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL || "";
-const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
-router.use(
-  session({
-    secret: MY_SECRET_KEY,
-    resave: false,
-    saveUninitialized: true,
-  })
-);
 
-router.use(passport.initialize());
-router.use(passport.session());
+router.post("/google", async (req, res, next) => {
+  try {
+    const { token } = req.body; // token sent from your React Native app
+    // Request user info from Google API using the access token
+    const response = await axios.get(
+      "https://www.googleapis.com/userinfo/v2/me",
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
 
-passport.serializeUser((user, done) => {
-  done(null, user);
-});
-
-passport.deserializeUser((user, done) => {
-  done(null, user as typeof User);
-});
-
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: GOOGLE_CLIENT_ID,
-      clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: GOOGLE_CALLBACK_URL,
-    },
-    (accessToken, refreshToken, profile, done) => {
-      return done(null, profile);
-    }
-  )
-);
-
-router.post("/google", (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  (async () => {
-    try {
-      const { token } = req.body.token;
-    
-    if (!token) {
-      return res.status(400).send("Kein Token bereitgestellt");
-    }
-
-    // Token verifizieren
-    const ticket = await googleClient.verifyIdToken({
-      idToken: token,
-      audience: GOOGLE_CLIENT_ID
-    });
-    
-    const payload = ticket.getPayload();
-    if (!payload || !payload.email) {
-      return res.status(401).send("Ungültiger Token");
-    }
-    
-    const email = payload.email;
-    const name = payload.name || "Google User";
-    
+    const userInfo = response.data;
+    const email = userInfo.email;
     // Benutzer finden oder erstellen
     let user = await User.findOne({ email });
     if (!user) {
       user = await User.create({
-        userName: name,
+        userName: userInfo.name,
         email,
         age: 18, // Standardalter
         method: "google",
         hashedPW: "GoogleAuth",
-        isVerified: payload.email_verified || false
+        isVerified: userInfo.email_verified || false,
       });
     }
-    
+
     // JWT erstellen und Antwort senden
     const jwt = createJwt(email);
     const userObject = user.toJSON();
     const orders = await Order.find({ user_id: user._id });
-    
+    res.status(200).send({ ...userObject, token: jwt, orders });
   } catch (error) {
-    console.error('Google Auth Error:', error);
+    console.error("Google Auth Error:", error);
     next(error);
   }
-  })();
 });
 
 // router.get(
