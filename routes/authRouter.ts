@@ -18,7 +18,11 @@ const router = express.Router();
 
 router.post("/google", async (req, res, next) => {
   try {
-    console.log("huhu");
+    await Error.create({
+      date: Date.now(),
+      error: `Google Auth route`,
+    });
+
     const { token } = req.body; // token sent from your React Native app
     // Request user info from Google API using the access token
     const response = await axios.get(
@@ -50,7 +54,10 @@ router.post("/google", async (req, res, next) => {
 
     res.status(200).send({ ...userObject, token: jwt, orders });
   } catch (error) {
-    Error.create({ date: Date.now(), error: `Google Auth Error:${error}` });
+    await Error.create({
+      date: Date.now(),
+      error: `Google Auth Error:${error}`,
+    });
 
     next(error);
   }
