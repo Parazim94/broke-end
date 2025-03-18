@@ -12,6 +12,7 @@ import { Error } from "../models/Error";
 const router = express.Router();
 
 router.put("/settings", checkToken, async (req: CustomRequest, res, next) => {
+  console.log("huhu");
   try {
     //loeschen,damit das nicht geaendert wird
     delete req.body.cash;
