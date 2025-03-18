@@ -1,14 +1,15 @@
 import express from "express";
-import session from "express-session";
-import passport from "passport";
-import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import { OAuth2Client } from "google-auth-library";
+// import session from "express-session";
+// import passport from "passport";
+// import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+// import { OAuth2Client } from "google-auth-library";
 import { User } from "../models/User";
 import { DeletedToken } from "../models/DeletedToken";
 import { hash, compare } from "../libs/crypto";
 import { createJwt } from "../libs/jwt";
 import { checkToken, CustomRequest } from "../middleware/checkToken";
-import { checkEmail } from "../middleware/checkEmail";
+// import { checkEmail } from "../middleware/checkEmail";
+import { Error } from "../models/Error";
 import { Order } from "../models/Orders";
 import sendVerificationEmail from "../libs/sendVerificationEmail";
 import createStandardResponse from "../libs/createStandardResponse";
@@ -38,7 +39,7 @@ router.post("/google", async (req, res, next) => {
         age: 18, // Standardalter
         method: "google",
         hashedPW: "GoogleAuth",
-        isVerified: userInfo.email_verified || false,
+        isVerified: true,
       });
     }
 
@@ -49,7 +50,8 @@ router.post("/google", async (req, res, next) => {
 
     res.status(200).send({ ...userObject, token: jwt, orders });
   } catch (error) {
-    console.error("Google Auth Error:", error);
+    Error.create({ date: Date.now(), error: `Google Auth Error:${error}` });
+
     next(error);
   }
 });
@@ -105,7 +107,11 @@ router.post("/login", async (req, res, next) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email: email });
+
     if (user && user.hashedPW && (await compare(password, user.hashedPW))) {
+      if (!user.isVerified) {
+        throw new Error("email not verified!");
+      }
       const jwt = createJwt(user.email);
       const userObject = user.toJSON();
       const orders = await Order.find({ user_id: user._id });
