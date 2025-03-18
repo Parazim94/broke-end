@@ -20,7 +20,10 @@ router.put("/settings", checkToken, async (req: CustomRequest, res, next) => {
     delete req.body.history;
     delete req.body.isVerified;
     delete req.body.tradeHistory;
-    await User.updateOne({ email: req.user.email }, req.body);
+    const updateResult = await User.updateOne(
+      { email: req.user.email },
+      { $set: req.body }
+    );
 
     res.send(await createStandardResponse(req.user.email, req.body.token));
   } catch (error) {
