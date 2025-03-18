@@ -17,6 +17,7 @@ const router = express.Router();
 
 router.post("/google", async (req, res, next) => {
   try {
+    console.log("huhu");
     const { token } = req.body; // token sent from your React Native app
     // Request user info from Google API using the access token
     const response = await axios.get(
@@ -45,6 +46,7 @@ router.post("/google", async (req, res, next) => {
     const jwt = createJwt(email);
     const userObject = user.toJSON();
     const orders = await Order.find({ user_id: user._id });
+
     res.status(200).send({ ...userObject, token: jwt, orders });
   } catch (error) {
     console.error("Google Auth Error:", error);

@@ -8,6 +8,7 @@ import tradeRoute from "./routes/tradeRouter";
 import userRoute from "./routes/userRouter";
 import aiRoute from "./routes/aiRouter";
 import { dailyStore, runAtMidnight } from "./libs/dailyStore";
+import intervalFetchData from "./libs/intervalFetchData";
 import path from "path";
 // import passport from "passport";
 // import { Strategy as GoogleStrategy } from "passport-google-oauth20";
@@ -39,6 +40,7 @@ dotenv.config();
 // serverUpkeeper();
 connectDB();
 dailyStore();
+intervalFetchData();
 
 const app = express();
 const MY_SECRET_KEY = process.env.MY_SECRET_KEY || "";
