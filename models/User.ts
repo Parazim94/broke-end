@@ -13,11 +13,11 @@ const historySchema = new Schema(
   },
   { _id: false } // Disable _id for history subdocuments
 );
-// const displayedToolsSchema = new Schema({
-//   chatAi: { type: Boolean, default: true },
-//   tutorial: { type: Boolean, default: true },
-//   quiz: { type: Boolean, default: true },
-// });
+const displayedToolsSchema = new Schema({
+  chatAi: { type: Boolean, default: true },
+  tutorial: { type: Boolean, default: true },
+  quiz: { type: Boolean, default: true },
+});
 const userSchema = new Schema(
   {
     userName: String,
@@ -34,7 +34,7 @@ const userSchema = new Schema(
     favorites: [String],
     prefTheme: { type: [String], default: ["dark", "#0000ff"] },
     tradeHistory: [tradeHistorySchema],
-    // displayedTools: displayedToolsSchema,
+    displayedTools: displayedToolsSchema,
   },
   { timestamps: true }
 );
