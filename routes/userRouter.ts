@@ -12,59 +12,30 @@ import { Error } from "../models/Error";
 const router = express.Router();
 
 router.put("/settings", checkToken, async (req: CustomRequest, res, next) => {
-  console.log("User-Update angefordert von:", req.user?.email);
-  console.log("Update-Daten:", req.body);
-
+  console.log("huhu");
   try {
-    // Loeschen, damit das nicht geaendert wird
+    //loeschen,damit das nicht geaendert wird
     delete req.body.cash;
     delete req.body.positions;
     delete req.body.history;
     delete req.body.isVerified;
     delete req.body.tradeHistory;
-
-    // Detaillierte Update-Operation mit $set
-    const updateData: { [key: string]: any } = {};
-
-    // Nur die Felder übernehmen, die tatsächlich geändert werden sollen
-    Object.keys(req.body).forEach((key) => {
-      if (key !== "token") {
-        // Token nicht in DB speichern
-        updateData[key] = req.body[key];
-      }
-    });
-
-    console.log("Effektive Update-Daten:", updateData);
-
-    // Wenn displayedTools vorhanden, explizit setzen
-    if (req.body.displayedTools) {
-      console.log("displayedTools wird aktualisiert:", req.body.displayedTools);
-    }
-
     const updateResult = await User.updateOne(
       { email: req.user.email },
-      { $set: updateData }
+      { $set: req.body }
     );
-
-    console.log("Update-Ergebnis:", updateResult);
-
-    // Prüfen ob das Update erfolgreich war
-    if (updateResult.modifiedCount === 0) {
-      console.log(
-        "Keine Änderungen vorgenommen. Entweder User nicht gefunden oder keine Änderungen notwendig."
-      );
-    }
-
-    // Validierung des Updates
-    const updatedUser = await User.findOne({ email: req.user.email });
-    console.log("Aktualisierter User (ohne sensible Daten):", {
-      email: updatedUser?.email,
-      displayedTools: updatedUser?.displayedTools,
-    });
 
     res.send(await createStandardResponse(req.user.email, req.body.token));
   } catch (error) {
     console.error("Fehler beim updaten!", error);
+    next(error);
+  }
+});
+
+router.post("/", checkToken, async (req: CustomRequest, res, next) => {
+  try {
+    res.json(await createStandardResponse(req.user.email, req.body.token));
+  } catch (error) {
     next(error);
   }
 });
