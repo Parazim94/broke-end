@@ -23,7 +23,7 @@ router.post("/google", async (req, res, next) => {
       error: `Google Auth route`,
     });
 
-    const { token } = req.body; // token sent from your React Native app
+    const { token } = req.body; // token sent from React Native app
     // Request user info from Google API using the access token
     const response = await axios.get(
       "https://www.googleapis.com/userinfo/v2/me",

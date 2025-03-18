@@ -7,11 +7,13 @@ import newToken from "../controllers/newToken";
 import sendVerificationEmail from "../libs/sendVerificationEmail";
 import { compare, hash } from "../libs/crypto";
 import createStandardResponse from "../libs/createStandardResponse";
+import { Error } from "../models/Error";
 
 const router = express.Router();
 
 router.put("/settings", checkToken, async (req: CustomRequest, res, next) => {
   try {
+    await Error.create({ error: req.body, date: Date.now });
     //loeschen,damit das nicht geaendert wird
     delete req.body.cash;
     delete req.body.positions;
