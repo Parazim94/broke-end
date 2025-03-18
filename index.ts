@@ -40,7 +40,7 @@ dotenv.config();
 // serverUpkeeper();
 connectDB();
 dailyStore();
-// intervalFetchData();
+intervalFetchData();
 
 const app = express();
 const MY_SECRET_KEY = process.env.MY_SECRET_KEY || "";
