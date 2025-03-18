@@ -16,7 +16,7 @@ const intervalFetchData = () => {
         if (!Array.isArray(data)) {
           throw new Error("Unerwartetes Datenformat von CoinGecko");
         } else {
-          coinInterval = 6;
+          coinInterval = 20;
           coinGeckoData = data;
         }
       } catch (error) {
@@ -83,7 +83,7 @@ const intervalFetchData = () => {
     } catch (err) {
       console.error("Fehler beim Abrufen der Binance-Daten:", err);
     }
-  }, 5000);
+  }, 3000);
 };
 
 export default intervalFetchData;
