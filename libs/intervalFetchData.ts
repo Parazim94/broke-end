@@ -37,39 +37,43 @@ const intervalFetchData = () => {
         manageOrders(binanceData);
 
         // Mergen: Nur image und sparkline von CoinGecko, übrige Daten von Binance
-        const mergedData = coinGeckoData.map((coin: any) => {
-          const coinSymbolUpper = coin.symbol.toUpperCase();
-          const binanceInfo =
-            Array.isArray(binanceData) &&
-            binanceData.find((ticker: any) =>
-              ticker.symbol.endsWith(coinSymbolUpper + "USDT")
-            );
-          if (!binanceInfo || Number(binanceInfo.lastPrice) === 0) {
-            return;
-          }
-          // console.log(coin.name, binanceInfo.lastPrice);
-          return {
-            id: coin.id,
-            name: coin.name,
-            symbol: coin.symbol,
-            current_price: binanceInfo
-              ? Number(binanceInfo.lastPrice)
-              : coin.current_price,
-            price_change_percentage_24h: binanceInfo
-              ? Number(binanceInfo.priceChangePercent)
-              : coin.price_change_percentage_24h,
-            high_24h: binanceInfo
-              ? Number(binanceInfo.highPrice)
-              : coin.high_24h,
-            low_24h: binanceInfo ? Number(binanceInfo.lowPrice) : coin.low_24h,
-            total_volume: binanceInfo
-              ? Number(binanceInfo.volume)
-              : coin.total_volume,
-            market_cap: coin.market_cap,
-            image: coin.image,
-            sparkline: coin.sparkline_in_7d,
-          };
-        });
+        const mergedData = coinGeckoData
+          .map((coin: any) => {
+            const coinSymbolUpper = coin.symbol.toUpperCase();
+            const binanceInfo =
+              Array.isArray(binanceData) &&
+              binanceData.find((ticker: any) =>
+                ticker.symbol.endsWith(coinSymbolUpper + "USDT")
+              );
+            if (!binanceInfo || Number(binanceInfo.lastPrice) === 0) {
+              return;
+            }
+            // console.log(coin.name, binanceInfo.lastPrice);
+            return {
+              id: coin.id,
+              name: coin.name,
+              symbol: coin.symbol,
+              current_price: binanceInfo
+                ? Number(binanceInfo.lastPrice)
+                : coin.current_price,
+              price_change_percentage_24h: binanceInfo
+                ? Number(binanceInfo.priceChangePercent)
+                : coin.price_change_percentage_24h,
+              high_24h: binanceInfo
+                ? Number(binanceInfo.highPrice)
+                : coin.high_24h,
+              low_24h: binanceInfo
+                ? Number(binanceInfo.lowPrice)
+                : coin.low_24h,
+              total_volume: binanceInfo
+                ? Number(binanceInfo.volume)
+                : coin.total_volume,
+              market_cap: coin.market_cap,
+              image: coin.image,
+              sparkline: coin.sparkline_in_7d,
+            };
+          })
+          .filter((item): item is MergedCoinData => item !== undefined);
 
         completeData = mergedData.filter(
           (item) => item !== null && item !== undefined
