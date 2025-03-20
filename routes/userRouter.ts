@@ -7,7 +7,7 @@ import newToken from "../controllers/newToken";
 import sendVerificationEmail from "../libs/sendVerificationEmail";
 import { compare, hash } from "../libs/crypto";
 import createStandardResponse from "../libs/createStandardResponse";
-import { Error } from "../models/Error";
+import { AppError } from "../models/Error";
 
 const router = express.Router();
 

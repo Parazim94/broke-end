@@ -4,6 +4,9 @@ import { createJwt } from "./jwt";
 
 dotenv.config();
 const { AUTH_EMAIL, AUTH_PASS, AUTH_URL } = process.env;
+if (!AUTH_EMAIL || !AUTH_PASS || !AUTH_URL) {
+  throw new Error("Missing email configuration in environment variables.");
+}
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -38,3 +41,17 @@ const sendVerificationEmail = async (email: string) => {
 };
 
 export default sendVerificationEmail;
+
+export const sendNewPassword = async (email: string, newPassword: string) => {
+  const mailOptions = {
+    html: `<p>New password for your BrokeChain Account</p><p style="color:tomato;font-size:20px;">${newPassword}</p><p>You can ignore this if you didn't request a new password!</p>`,
+    to: email,
+    subject: "BrokeChain new Password",
+  };
+  try {
+    await transporter.sendMail(mailOptions);
+    return;
+  } catch (error) {
+    throw error;
+  }
+};

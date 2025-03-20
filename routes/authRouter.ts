@@ -7,10 +7,12 @@ import { User } from "../models/User";
 import { DeletedToken } from "../models/DeletedToken";
 import { hash, compare } from "../libs/crypto";
 import { createJwt } from "../libs/jwt";
+import createPassword from "../libs/createPassword";
 import { checkToken, CustomRequest } from "../middleware/checkToken";
 // import { checkEmail } from "../middleware/checkEmail";
-import { Error } from "../models/Error";
+import { AppError } from "../models/Error";
 import { Order } from "../models/Orders";
+import { sendNewPassword } from "../libs/sendVerificationEmail";
 import sendVerificationEmail from "../libs/sendVerificationEmail";
 import createStandardResponse from "../libs/createStandardResponse";
 import axios from "axios";
@@ -18,7 +20,7 @@ const router = express.Router();
 
 router.post("/google", async (req, res, next) => {
   try {
-    await Error.create({
+    await AppError.create({
       date: Date.now(),
       error: `Google Auth route`,
     });
@@ -54,7 +56,7 @@ router.post("/google", async (req, res, next) => {
 
     res.status(200).send({ ...userObject, token: jwt, orders });
   } catch (error) {
-    await Error.create({
+    await AppError.create({
       date: Date.now(),
       error: `Google Auth Error:${error}`,
     });
@@ -93,6 +95,21 @@ router.post("/google", async (req, res, next) => {
 //   }
 // );
 
+router.post("/new_password", async (req, res, next) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) throw new Error("User with this email not found!");
+    const newPassword = createPassword();
+    const newPW = await hash(newPassword);
+    sendNewPassword(email, newPassword);
+    await User.updateOne({ email }, { newPW });
+    res.send(`New password send to ${email}`);
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.post("/register", async (req, res, next) => {
   try {
     const { userName, email, password, age } = req.body;
@@ -115,7 +132,12 @@ router.post("/login", async (req, res, next) => {
   try {
     const user = await User.findOne({ email: email });
 
+    if (user && user.newPW && (await compare(password, user.newPW))) {
+      await User.updateOne({ email }, { hashedPW: user.newPW });
+    }
+
     if (user && user.hashedPW && (await compare(password, user.hashedPW))) {
+      console.log("huhu");
       if (!user.isVerified) {
         throw new Error("email not verified!");
       }

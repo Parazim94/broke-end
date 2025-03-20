@@ -5,4 +5,4 @@ const errorSchema = new Schema({
   error: String,
 });
 
-export const Error = model("error", errorSchema);
+export const AppError = model("error", errorSchema);
