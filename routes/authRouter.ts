@@ -104,7 +104,8 @@ router.post("/new_password", async (req, res, next) => {
     const newPW = await hash(newPassword);
     sendNewPassword(email, newPassword);
     await User.updateOne({ email }, { newPW });
-    res.send(`New password send to ${email}`);
+    console.log(`New password send to ${email}`);
+    res.json(`New password send to ${email}`);
   } catch (error) {
     next(error);
   }
