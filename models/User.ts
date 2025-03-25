@@ -36,6 +36,8 @@ const userSchema = new Schema(
     prefTheme: { type: [String], default: ["dark", "#0000ff"] },
     tradeHistory: [tradeHistorySchema],
     displayedTools: displayedToolsSchema,
+    icon: { type: String },
+    iconColor: { type: String },
   },
   { timestamps: true }
 );
