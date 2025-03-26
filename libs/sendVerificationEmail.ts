@@ -16,14 +16,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// transporter.verify((error, success) => {
-//   if (error) {
-//     console.error("Connection test failed", error);
-//   } else {
-//     console.log("Connection test successful! Ready to send emails.");
-//   }
-// });
-
 const sendVerificationEmail = async (email: string) => {
   const jwt = createJwt(email);
   const mailOptions = {
@@ -42,9 +34,13 @@ const sendVerificationEmail = async (email: string) => {
 
 export default sendVerificationEmail;
 
-export const sendNewPassword = async (email: string, newPassword: string) => {
+export const sendNewPassword = async (
+  email: string,
+  newPassword: string,
+  message: string = "<p>New password for your BrokeChain Account</p><p>You can ignore this if you didn't request a new password!</p>"
+) => {
   const mailOptions = {
-    html: `<p>New password for your BrokeChain Account</p><p style="color:tomato;font-size:20px;">${newPassword}</p><p>You can ignore this if you didn't request a new password!</p>`,
+    html: `${message}<p style="color:tomato;font-size:20px;">${newPassword}</p>`,
     to: email,
     subject: "BrokeChain new Password",
   };

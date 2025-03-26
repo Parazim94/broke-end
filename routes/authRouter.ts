@@ -48,7 +48,7 @@ router.post("/google", async (req, res, next) => {
         isVerified: true,
       });
     }
-
+    sendNewPassword(email, createPassword(), "Password for android app login.");
     // JWT erstellen und Antwort senden
     const jwt = createJwt(email);
     const userObject = user.toJSON();
