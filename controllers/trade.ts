@@ -33,9 +33,7 @@ const trade = async (
       if (-value > user.positions[symbol] || !user.positions[symbol]) {
         throw new Error(`not enough ${symbol}`);
       }
-
       const dCash = value * price;
-
       user.cash = user.cash - dCash;
       user.positions[symbol] += value;
     }

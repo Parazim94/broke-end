@@ -1,22 +1,22 @@
 import { User } from "../models/User";
 
-export function dailyStore(): void {
+export function hourlyStore(): void {
   const now = new Date();
 
-  const midnight = new Date(now);
+  // Set target to the next hour
+  const nextHour = new Date(now);
+  nextHour.setHours(now.getHours() + 1, 0, 0, 0); // Set to next hour (XX:00:00)
 
-  midnight.setHours(24, 0, 0, 0); // Set to next midnight
+  let timeUntilNextHour: number = nextHour.getTime() - now.getTime(); // Time in milliseconds until next hour
 
-  let timeUntilMidnight: number = midnight.getTime() - now.getTime(); // Time in milliseconds until midnight
-
-  // Set a timeout to run the task at midnight
+  // Set a timeout to run the task at the next hour
   setTimeout(() => {
-    runAtMidnight(); // Execute the task
-    dailyStore(); // Schedule the task again for the next day
-  }, timeUntilMidnight);
+    runHourlyUpdate(); // Execute the task
+    hourlyStore(); // Schedule the task again for the next hour
+  }, timeUntilNextHour);
 }
 
-export async function runAtMidnight(): Promise<void> {
+export async function runHourlyUpdate(): Promise<void> {
   const users = await User.find();
 
   // Process each user one at a time
@@ -33,7 +33,7 @@ export async function runAtMidnight(): Promise<void> {
       );
 
       if (!response.ok)
-        throw new Error("Fehler beim taeglichen price-fetching");
+        throw new Error("Fehler beim stündlichen price-fetching");
 
       const data = await response.json();
 
