@@ -25,11 +25,6 @@ dailyStore();
 intervalFetchData();
 
 const app = express();
-// const MY_SECRET_KEY = process.env.MY_SECRET_KEY || "";
-
-// const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "";
-// const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || "";
-
 app.use(cors());
 
 app.use(express.json());

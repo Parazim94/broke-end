@@ -65,36 +65,6 @@ router.post("/google", async (req, res, next) => {
   }
 });
 
-// router.get(
-//   "/google",
-//   passport.authenticate("google", { scope: ["profile", "email"] })
-// );
-
-// router.get(
-//   "/google/callback",
-//   passport.authenticate("google", { failureRedirect: "/" }),
-//   async (req, res, next) => {
-//     // Successful authentication
-//     const email = (req.user as any).emails[0].value;
-//     let user = await User.findOne({ email });
-//     if (!user) {
-//       const userName = req.body.displayName;
-
-//       user = await User.create({
-//         userName,
-//         email,
-//         age: 66,
-//         method: "google",
-//         hashedPW: "Googlekowski",
-//       });
-//     }
-//     const jwt = createJwt(email);
-//     const userObject = user.toJSON();
-//     const orders = await Order.find({ user_id: user._id });
-//     res.status(200).send({ ...userObject, token: jwt, orders });
-//   }
-// );
-
 router.post("/new_password", async (req, res, next) => {
   const { email } = req.body;
   try {
