@@ -37,9 +37,9 @@ router.post("/google", async (req, res, next) => {
     const userInfo = response.data;
     const email = userInfo.email;
     // Benutzer finden oder erstellen
+    let isNewUser = false;
     let user = await User.findOne({ email });
     if (!user) {
-      console.log("newUser");
       user = await User.create({
         userName: userInfo.name,
         email,
@@ -48,12 +48,13 @@ router.post("/google", async (req, res, next) => {
         hashedPW: "GoogleAuth",
         isVerified: true,
       });
-      console.log(email);
+
       sendNewPassword(
         email,
         createPassword(),
-        "Password for android app login."
+        "Use this password for android app login."
       );
+      isNewUser = true;
     }
 
     // JWT erstellen und Antwort senden
@@ -61,7 +62,7 @@ router.post("/google", async (req, res, next) => {
     const userObject = user.toJSON();
     const orders = await Order.find({ user_id: user._id });
 
-    res.status(200).send({ ...userObject, token: jwt, orders });
+    res.status(200).send({ ...userObject, token: jwt, orders, isNewUser });
   } catch (error) {
     await AppError.create({
       date: Date.now(),
