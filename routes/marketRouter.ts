@@ -99,11 +99,10 @@ router.get("/", async (req, res, next) => {
 
 router.get("/news", async (req, res, next) => {
   const RSS_URL = "https://www.coindesk.com/arc/outboundfeeds/rss/";
-  const API_URL = `https://api.rss2json.com/v1/api.json?rss_url=${RSS_URL}`;
 
   try {
-    const response = await fetch(API_URL);
-    const data = await response.json();
+    const response = await fetch(RSS_URL);
+    const data = await response.text();
     res.send(data);
   } catch (error) {
     next(error);
