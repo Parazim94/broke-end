@@ -42,11 +42,11 @@ const intervalFetchData = () => {
 
         // Mergen: Nur image und sparkline von CoinGecko, übrige Daten von Binance
         const mergedData = coinGeckoData
-          .map((coin: any) => {
+          .map((coin: CoinGeckoCoin) => {
             const coinSymbolUpper = coin.symbol.toUpperCase();
             const binanceInfo =
               Array.isArray(binanceData) &&
-              binanceData.find((ticker: any) =>
+              binanceData.find((ticker: BinanceTicker) =>
                 ticker.symbol.endsWith(coinSymbolUpper + "USDT")
               );
             if (!binanceInfo || Number(binanceInfo.lastPrice) === 0) {
