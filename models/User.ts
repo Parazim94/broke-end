@@ -33,7 +33,7 @@ const userSchema = new Schema(
     history: [historySchema], //trade.id
     positions: { type: Object, default: {} }, //symbol,value
     favorites: [String],
-    prefTheme: { type: [String], default: ["dark", "#0000ff"] },
+    prefTheme: { type: [String], default: ["dark", "#00a9d7"] },
     tradeHistory: [tradeHistorySchema],
     displayedTools: displayedToolsSchema,
     icon: { type: String },
