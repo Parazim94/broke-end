@@ -1,5 +1,9 @@
 import { manageOrders } from "../controllers/manageOrders";
-import { CoinGeckoCoin, BinanceTicker, MergedCoinData } from "./interfaces";
+import {
+  CoinGeckoCoin,
+  BinanceTicker,
+  MergedCoinData,
+} from "../types/tradeInterfaces";
 let coinInterval = 1;
 let coinGeckoData: CoinGeckoCoin[] = [];
 let binanceData: BinanceTicker[] = [];

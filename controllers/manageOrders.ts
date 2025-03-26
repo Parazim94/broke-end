@@ -1,6 +1,8 @@
 import { User } from "../models/User";
 import { Order } from "../models/Orders";
 import { storeTrade } from "../controllers/trade";
+import { BinanceTicker } from "../types/tradeInterfaces";
+
 interface BinanceCache {
   [key: string]: any; // This represents the binance cache object
 }
@@ -14,7 +16,7 @@ export const manageOrders = async (
 
     const key = order.symbol;
     const coin = binanceCache.find(
-      (coin: any) => coin.symbol === `${key.toUpperCase()}USDT`
+      (coin: BinanceTicker) => coin.symbol === `${key.toUpperCase()}USDT`
     );
 
     //kaufen?

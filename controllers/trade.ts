@@ -1,10 +1,10 @@
 import { User } from "../models/User";
-
+import { IUser } from "../types/user";
 const trade = async (
   symbol: string,
   binanceSymbol: string,
   value: number,
-  user: any
+  user: IUser
 ) => {
   if (binanceSymbol) {
     const response = await fetch(
