@@ -39,6 +39,7 @@ router.post("/google", async (req, res, next) => {
     // Benutzer finden oder erstellen
     let user = await User.findOne({ email });
     if (!user) {
+      console.log("newUser");
       user = await User.create({
         userName: userInfo.name,
         email,
@@ -47,6 +48,7 @@ router.post("/google", async (req, res, next) => {
         hashedPW: "GoogleAuth",
         isVerified: true,
       });
+      console.log(email);
       sendNewPassword(
         email,
         createPassword(),
