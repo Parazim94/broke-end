@@ -2,29 +2,25 @@ import { User } from "../models/User";
 
 export function dailyStore(): void {
   const now = new Date();
-
   const midnight = new Date(now);
+  midnight.setHours(24, 0, 0, 0);
+  let timeUntilMidnight: number = midnight.getTime() - now.getTime();
 
-  midnight.setHours(24, 0, 0, 0); // Set to next midnight
-
-  let timeUntilMidnight: number = midnight.getTime() - now.getTime(); // Time in milliseconds until midnight
-
-  // Set a timeout to run the task at midnight
   setTimeout(() => {
-    runAtMidnight(); // Execute the task
-    dailyStore(); // Schedule the task again for the next day
+    runAtMidnight();
+    dailyStore();
   }, timeUntilMidnight);
 }
 
 export async function runAtMidnight(): Promise<void> {
   const users = await User.find();
 
-  // Process each user one at a time
+  // each user
   for (const user of users) {
     let total: number = user.cash;
     const positions = Object.keys(user.positions);
 
-    // Process each position one at a time
+    // each position
     for (const key of positions) {
       const binanceSymbol = key.toUpperCase() + "USDT";
 

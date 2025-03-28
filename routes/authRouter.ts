@@ -119,10 +119,11 @@ router.post("/register", async (req, res, next) => {
 router.post("/login", async (req, res, next) => {
   const { email, password } = req.body;
   try {
-    const user = await User.findOne({ email: email });
+    let user = await User.findOne({ email: email });
 
     if (user && user.newPW && (await compare(password, user.newPW))) {
       await User.updateOne({ email }, { hashedPW: user.newPW });
+      user = await User.findOne({ email });
     }
 
     if (user && user.hashedPW && (await compare(password, user.hashedPW))) {

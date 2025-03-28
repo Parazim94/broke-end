@@ -14,10 +14,7 @@ const trade = async (
       throw new Error(`kein fetch!: ${response.status} ${response.statusText}`);
     const data = await response.json();
     const price = await data.price;
-    // if (!price)
-    //   throw new Error(
-    //     `preis stimmt nicht: ${price}   Bsymbol${binanceSymbol} symbol ${symbol} data:${data.symbol}, ${data.price}`
-    //   );
+
     if (value === 0) throw new Error("sehr witzig...");
     if (!user.positions) user.positions = {};
     if (value > 0) {

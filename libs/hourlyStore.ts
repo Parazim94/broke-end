@@ -3,13 +3,11 @@ import { User } from "../models/User";
 export function hourlyStore(): void {
   const now = new Date();
 
-  // Set target to the next hour
   const nextHour = new Date(now);
   nextHour.setHours(now.getHours() + 1, 0, 0, 0); // Set to next hour (XX:00:00)
 
   let timeUntilNextHour: number = nextHour.getTime() - now.getTime(); // Time in milliseconds until next hour
 
-  // Set a timeout to run the task at the next hour
   setTimeout(() => {
     runHourlyUpdate(); // Execute the task
     hourlyStore(); // Schedule the task again for the next hour
@@ -19,12 +17,12 @@ export function hourlyStore(): void {
 export async function runHourlyUpdate(): Promise<void> {
   const users = await User.find();
 
-  // Process each user one at a time
+  // each user
   for (const user of users) {
     let total: number = user.cash;
     const positions = Object.keys(user.positions);
 
-    // Process each position one at a time
+    // each position
     for (const key of positions) {
       const binanceSymbol = key.toUpperCase() + "USDT";
 

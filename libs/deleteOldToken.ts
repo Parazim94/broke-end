@@ -13,11 +13,11 @@ export const deleteOldToken = async () => {
     const oldToken: string = token.token as string;
     try {
       const payload = jwt.verify(oldToken, secret);
-      if (typeof payload !== "string" && "email" in payload) {
-        // console.log("nicht loeschen bitte");
-      } else {
-        console.log(`loeschen : ${token.token}`);
-      }
+      // if (typeof payload !== "string" && "email" in payload) {
+
+      // } else {
+      //   console.log(`loeschen : ${token.token}`);
+      // }
     } catch (error) {
       console.log(`loeschen : ${oldToken}`);
       await DeletedToken.deleteOne({ token: oldToken });

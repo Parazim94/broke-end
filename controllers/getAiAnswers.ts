@@ -6,7 +6,7 @@ dotenv.config();
 const RSS_URL = "https://www.coindesk.com/arc/outboundfeeds/rss/";
 const API_URL = `https://api.rss2json.com/v1/api.json?rss_url=https://www.coindesk.com/arc/outboundfeeds/rss/`;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
-// Initialize Google Generative AI with your API key
+// Initialize Google Generative AI
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 const getAiAnswers = async (message: string) => {
@@ -22,9 +22,9 @@ const getAiAnswers = async (message: string) => {
       recentNews.forEach((item: NewsItem, index: number) => {
         newsContext += `${index + 1}. ${item.title}\n`;
         console.log(newsContext);
-        // Beschränke den Inhalt auf 100 Zeichen für einen kurzen Überblick
+        // Beschränke den Inhalt auf 200 Zeichen für einen kurzen Überblick
         const cleanContent =
-          item.content.replace(/<[^>]+>/g, "").substring(0, 100) + "...";
+          item.content.replace(/<[^>]+>/g, "").substring(0, 200) + "...";
         newsContext += `${cleanContent}\n\n`;
       });
 

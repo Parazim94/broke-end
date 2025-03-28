@@ -3,7 +3,6 @@ import { User } from "../models/User";
 import { DeletedToken } from "../models/DeletedToken";
 import { deleteOldToken } from "../libs/deleteOldToken";
 const newToken = async (token: string, email: string) => {
-  //token erneuern
   const user = await User.findOne({ email: email });
   if (!user) {
     throw new Error("no user found at building new token!");
