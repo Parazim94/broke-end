@@ -37,6 +37,6 @@ export interface IUser {
   displayedTools: IDisplayedTools;
   icon?: string;
   iconColor?: string;
-  createdAt?: Date; // automatically managed by Mongoose with timestamps
-  updatedAt?: Date; // automatically managed by Mongoose with timestamps
+  createdAt?: Date;
+  updatedAt?: Date;
 }

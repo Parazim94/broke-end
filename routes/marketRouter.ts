@@ -1,15 +1,7 @@
 import express from "express";
-import { manageOrders } from "../controllers/manageOrders";
 import { completeData } from "../libs/intervalFetchData";
-import { BinanceTicker, CoinGeckoCoin } from "../types/tradeInterfaces";
+import xml2js from "xml2js";
 const router = express.Router();
-
-// Globale Cache-Variablen für CoinGecko
-// let cachedData: CoinGeckoCoin = null;
-let lastFetchTime: number = 0;
-// Globale Cache-Variablen für Binance
-let binanceCache: BinanceTicker[] = [];
-let lastBinanceFetchTime: number = 0;
 
 router.get("/", async (req, res, next) => {
   res.send(completeData);
@@ -20,7 +12,7 @@ router.get("/news", async (req, res, next) => {
 
   try {
     // Import xml2js at runtime if not available globally
-    const xml2js = require("xml2js");
+    // const xml2js = require("xml2js");
     const parser = new xml2js.Parser({
       explicitArray: false,
       mergeAttrs: true,
