@@ -77,7 +77,6 @@ router.delete("/delete", checkToken, async (req: CustomRequest, res, next) => {
     const userObjectWithOptionalId = userObject as { _id?: any };
     delete userObjectWithOptionalId._id;
     await DeletedUser.create(userObjectWithOptionalId);
-    console.log("huhu");
     res.send("deleted");
   } catch (error) {
     next(error);

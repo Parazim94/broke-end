@@ -87,7 +87,7 @@ const intervalFetchData = () => {
     } catch (err) {
       console.error("Fehler beim Abrufen der Binance-Daten:", err);
     }
-  }, 30000);
+  }, 5000);
 };
 
 export default intervalFetchData;
