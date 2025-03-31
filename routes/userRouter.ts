@@ -2,6 +2,7 @@ import express from "express";
 import { checkToken, CustomRequest } from "../middleware/checkToken";
 import { checkEmail } from "../middleware/checkEmail";
 import { User } from "../models/User";
+import { DeletedUser } from "../models/DeletedUser";
 import { Order } from "../models/Orders";
 import newToken from "../controllers/newToken";
 import sendVerificationEmail from "../libs/sendVerificationEmail";
@@ -65,7 +66,23 @@ router.put(
     }
   }
 );
-
+router.delete("/delete", checkToken, async (req: CustomRequest, res, next) => {
+  try {
+    const user = await User.findOne({ email: req.user.email });
+    if (!user) {
+      throw new Error("User not found");
+    }
+    await User.deleteOne({ email: req.user.email });
+    const userObject = user.toObject();
+    const userObjectWithOptionalId = userObject as { _id?: any };
+    delete userObjectWithOptionalId._id;
+    await DeletedUser.create(userObjectWithOptionalId);
+    console.log("huhu");
+    res.send("deleted");
+  } catch (error) {
+    next(error);
+  }
+});
 router.put(
   "/change_email",
   checkToken,
