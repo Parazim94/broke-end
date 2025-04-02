@@ -8,7 +8,7 @@ import tradeRoute from "./routes/tradeRouter";
 import userRoute from "./routes/userRouter";
 import aiRoute from "./routes/aiRouter";
 import { dailyStore, runAtMidnight } from "./libs/dailyStore";
-import { hourlyStore } from "./libs/hourlyStore";
+import { twiceDailyStore } from "./libs/twiceDailyStore";
 import intervalFetchData from "./libs/intervalFetchData";
 import path from "path";
 
@@ -22,7 +22,7 @@ interface NextFunction extends express.NextFunction {}
 dotenv.config();
 
 connectDB();
-hourlyStore();
+twiceDailyStore();
 // dailyStore();
 intervalFetchData();
 
