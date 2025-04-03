@@ -40,11 +40,11 @@ app.use("/trade", tradeRoute);
 app.use("/user", userRoute);
 
 // Danach statische Dateien bereitstellen:
-app.use(express.static(path.join(__dirname, "../BrokeChain/dist")));
+app.use(express.static(path.join(__dirname, "../../BrokeChain/dist")));
 
 app.use("*", (req, res, next) => {
   console.log("Fallback Route aufgerufen für", req.method, req.originalUrl);
-  res.sendFile(path.join(__dirname, "../BrokeChain/dist", "index.html"));
+  res.sendFile(path.join(__dirname, "../../BrokeChain/dist", "index.html"));
 });
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
