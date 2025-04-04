@@ -73,10 +73,11 @@ router.delete("/delete", checkToken, async (req: CustomRequest, res, next) => {
       throw new Error("User not found");
     }
     await User.deleteOne({ email: req.user.email });
-    const userObject = user.toObject();
-    const userObjectWithOptionalId = userObject as { _id?: any };
-    delete userObjectWithOptionalId._id;
-    await DeletedUser.create(userObjectWithOptionalId);
+    // user backup
+    // const userObject = user.toObject();
+    // const userObjectWithOptionalId = userObject as { _id?: any };
+    // delete userObjectWithOptionalId._id;
+    // await DeletedUser.create(userObjectWithOptionalId);
     res.send("deleted");
   } catch (error) {
     next(error);
