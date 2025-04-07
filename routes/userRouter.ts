@@ -13,7 +13,6 @@ import { AppError } from "../models/Error";
 const router = express.Router();
 
 router.put("/settings", checkToken, async (req: CustomRequest, res, next) => {
-  console.log(req.body);
   try {
     //loeschen,damit das nicht geaendert wird
     delete req.body.cash;
@@ -25,7 +24,7 @@ router.put("/settings", checkToken, async (req: CustomRequest, res, next) => {
       { email: req.user.email },
       { $set: req.body }
     );
-    console.log(updateResult);
+
     res.send(await createStandardResponse(req.user.email, req.body.token));
   } catch (error) {
     console.error("Fehler beim updaten!", error);

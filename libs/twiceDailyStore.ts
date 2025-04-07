@@ -68,7 +68,6 @@ export async function runUpdateTask(): Promise<void> {
       if (user.history.length > 750) {
         // Keep only the newest 750 entries
         user.history.splice(0, user.history.length - 750);
-        console.log(`Trimmed history to 750 entries for user: ${user.email}`);
       }
       await user.save();
     }
@@ -78,54 +77,3 @@ export async function runUpdateTask(): Promise<void> {
     console.error("Error during portfolio update:", error);
   }
 }
-
-/**
- * Removes history entries older than one year for all users
- */
-// export async function cleanupOldHistory(): Promise<void> {
-//   console.log("Starting cleanup of old history data");
-
-//   try {
-//     // Calculate the date one year ago
-//     const oneYearAgo = Date.now() - 365 * 24 * 60 * 60 * 1000;
-
-//     const users = await User.find();
-//     console.log(`Cleaning history for ${users.length} users`);
-
-//     let totalEntriesRemoved = 0;
-
-//     for (const user of users) {
-//       // Count original entries
-//       const originalLength = user.history.length;
-
-//       // Filter out entries older than one year
-//       const entriesToKeep = [];
-//       for (const entry of user.history) {
-//         if (entry.date != null && Number(entry.date) >= oneYearAgo) {
-//           entriesToKeep.push(entry);
-//         }
-//       }
-
-//       // Clear the array and push the entries to keep
-//       user.history.splice(0, user.history.length);
-//       entriesToKeep.forEach(entry => user.history.push(entry));
-
-//       // Calculate how many entries were removed
-//       const entriesRemoved = originalLength - user.history.length;
-//       totalEntriesRemoved += entriesRemoved;
-
-//       if (entriesRemoved > 0) {
-//         await user.save();
-//         console.log(
-//           `Removed ${entriesRemoved} old history entries for user: ${user.email}`
-//         );
-//       }
-//     }
-
-//     console.log(
-//       `History cleanup complete. Removed ${totalEntriesRemoved} old entries.`
-//     );
-//   } catch (error) {
-//     console.error("Error during history cleanup:", error);
-//   }
-// }

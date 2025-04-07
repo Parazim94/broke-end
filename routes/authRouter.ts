@@ -84,17 +84,14 @@ router.post("/new_password", async (req, res, next) => {
     // Add logging and error handling for the email sending
     try {
       await sendNewPassword(email, newPassword);
-      console.log(`Email successfully sent to ${email}`);
     } catch (emailError: any) {
-      console.error("Email sending error:", emailError);
       return next(new Error(`Failed to send email: ${emailError.message}`));
     }
 
     await User.updateOne({ email }, { newPW });
-    console.log(`New password generated for ${email}`);
+
     res.json({ message: `New password sent to ${email}` });
   } catch (error) {
-    console.error("Password reset error:", error);
     next(error);
   }
 });
@@ -127,7 +124,6 @@ router.post("/login", async (req, res, next) => {
     }
 
     if (user && user.hashedPW && (await compare(password, user.hashedPW))) {
-      console.log("huhu");
       if (!user.isVerified) {
         throw new Error("email not verified!");
       }

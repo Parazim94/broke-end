@@ -52,7 +52,7 @@ const intervalFetchData = () => {
             if (!binanceInfo || Number(binanceInfo.lastPrice) === 0) {
               return;
             }
-            // console.log(coin.name, binanceInfo.lastPrice);
+
             return {
               id: coin.id,
               name: coin.name,
@@ -82,7 +82,6 @@ const intervalFetchData = () => {
         completeData = mergedData.filter(
           (item) => item !== null && item !== undefined
         );
-        // console.log("huhu", completeData);
       }
     } catch (err) {
       console.error("Fehler beim Abrufen der Binance-Daten:", err);

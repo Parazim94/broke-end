@@ -21,7 +21,6 @@ const getAiAnswers = async (message: string) => {
 
       recentNews.forEach((item: NewsItem, index: number) => {
         newsContext += `${index + 1}. ${item.title}\n`;
-        console.log(newsContext);
         // Beschränke den Inhalt auf 200 Zeichen für einen kurzen Überblick
         const cleanContent =
           item.content.replace(/<[^>]+>/g, "").substring(0, 200) + "...";
