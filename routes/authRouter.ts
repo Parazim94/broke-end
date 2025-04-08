@@ -1,15 +1,11 @@
 import express from "express";
-// import session from "express-session";
-// import passport from "passport";
-// import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-// import { OAuth2Client } from "google-auth-library";
+
 import { User } from "../models/User";
 import { DeletedToken } from "../models/DeletedToken";
 import { hash, compare } from "../libs/crypto";
 import { createJwt } from "../libs/jwt";
 import createPassword from "../libs/createPassword";
 import { checkToken, CustomRequest } from "../middleware/checkToken";
-// import { checkEmail } from "../middleware/checkEmail";
 import { AppError } from "../models/Error";
 import { Order } from "../models/Orders";
 import { sendNewPassword } from "../libs/sendVerificationEmail";
@@ -40,18 +36,20 @@ router.post("/google", async (req, res, next) => {
     let isNewUser = false;
     let user = await User.findOne({ email });
     if (!user) {
+      const password = createPassword();
+      const hashedPassword = await hash(password);
       user = await User.create({
         userName: userInfo.name,
         email,
         age: 18, // Standardalter
         method: "google",
-        hashedPW: "GoogleAuth",
+        hashedPW: hashedPassword,
         isVerified: true,
       });
 
-      sendNewPassword(
+      await sendNewPassword(
         email,
-        createPassword(),
+        password,
         "Use this password for android app login."
       );
       isNewUser = true;
